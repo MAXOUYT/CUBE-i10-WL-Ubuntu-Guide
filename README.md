@@ -36,6 +36,8 @@
 - [第十七阶段：Flatpak 网络劫持排查](#第十七阶段flatpak-网络劫持排查)
 - [第十八阶段：zhcon 中文终端](#第十八阶段tty2-自动启动-zhcon中文终端)
 - [第十九阶段：电池状态查看](#第十九阶段电池状态查看日常维护)
+- [第二十阶段：桌面工具推荐（压缩/文本/蓝牙）](#第二十阶段桌面工具推荐压缩文本蓝牙)
+- [第二十一阶段：软件安装与包管理建议](#第二十一阶段软件安装与包管理建议)
 - [📋 常见问题（FAQ）](#-常见问题faq)
   - [🖥️ MATE 桌面图标显示（主文件夹/回收站）](#️-mate-桌面图标显示主文件夹回收站)
 - [📋 许可证声明](#-许可证声明)
@@ -790,6 +792,160 @@ upower -i $(upower -e | grep BAT) | grep -E "percentage|state|time to empty"
 
 > 💡 **电池容量校准（BMS 学习）**：若系统读取的 `energy-full` 与实际电池容量偏差较大，可进行一次**完整充放电循环（100% → 0% → 100%）**，让 BMS 重新学习容量曲线。
 > ⚠️ **仅更换新电池后的操作**：新电池首次使用建议做 1-2 次完整充放电循环，让 BMS 学习新电池的真实容量（`energy-full-design` 与 `energy-full` 会逐渐趋于一致）。
+
+---
+# 第二十阶段：桌面工具推荐（压缩/文本/蓝牙）
+
+> 针对 2GB 内存的 Bay Trail 设备，推荐轻量级桌面工具，替代启动缓慢的大型软件。
+> 以下方案按推荐度排序，标注"已实测"的均已在 CUBE i10-WL 上验证通过。
+
+## 🗂️ 压缩包管理器
+
+### ✅ 方案一：ark（KDE 解压工具，已实测可用）
+
+```bash
+sudo apt install ark -y
+```
+
+- **优点**：依赖较少，在 MATE 下运行稳定，支持常见格式（zip、tar、7z、rar 等）。
+- **实测状态**：已在 CUBE i10-WL 上验证通过。
+
+### 🟡 方案二：命令行解压（最轻量，无需图形界面）
+
+如果图形工具安装失败或不需要图形界面，可用命令行：
+
+```bash
+# 安装必要工具（大部分已预装）
+sudo apt install unzip p7zip-full unrar -y
+
+# 常用解压命令
+unzip file.zip          # 解压 .zip
+tar -xzf file.tar.gz    # 解压 .tar.gz
+tar -xjf file.tar.bz2   # 解压 .tar.bz2
+unrar x file.rar        # 解压 .rar
+7z x file.7z            # 解压 .7z
+```
+
+### ⚠️ 备选方案（可能因依赖问题无法安装）
+
+以下工具在 Ubuntu 26.04 上可能因 bzip2 依赖冲突而无法安装，仅作记录：
+
+- file-roller（GNOME 归档管理器）
+- engrampa（MATE 归档管理器）
+- xarchiver
+
+> 如果上述工具安装失败，直接使用**方案一（ark）**或**方案二（命令行）**即可。
+
+## 📄 文本查看器/编辑器（轻量级）
+
+用于快速打开 .txt 等纯文本文件，替代启动缓慢的 LibreOffice。
+
+### ✅ 方案一：CorePad（已实测可用，Flatpak）
+
+```bash
+flatpak install flathub org.cubocore.CorePad
+```
+
+- **优点**：轻量、启动快、支持语法高亮、界面现代。
+- **实测状态**：已在 CUBE i10-WL 上验证通过，设置为默认文本编辑器后双击 .txt 文件即可快速打开。
+
+### 🟡 备选方案（其他 Flatpak 轻量编辑器）
+
+```bash
+# Mousepad（Xfce 默认编辑器，极轻量）
+flatpak install flathub org.xfce.mousepad
+
+# Janus（Leafpad 继承者，极简）
+flatpak install flathub dev.pantheum.janus
+```
+
+### 📦 系统自带方案（已预装或轻量）
+
+- **Pluma**：MATE 默认文本编辑器（`sudo apt install pluma`），启动速度尚可。
+- **Nano**：命令行文本编辑器（已预装），适合快速编辑配置文件。
+
+## 🐦 蓝牙管理器
+
+用于在 MATE 桌面下配对和管理蓝牙设备（耳机、音箱等）。
+
+### ✅ 方案一：Bluejay（已实测可用，Flatpak）
+
+```bash
+flatpak install flathub io.github.ebonjaeger.bluejay
+```
+
+- **优点**：界面简洁直观，支持扫描、配对、连接、信任/阻止设备。
+- **实测状态**：已在 CUBE i10-WL 上验证通过，连接蓝牙音箱正常。
+- **权限说明**：首次运行后如需授予权限，可在终端执行 `flatpak run io.github.ebonjaeger.bluejay` 启动。
+
+### 🟡 备选方案（其他蓝牙管理器）
+
+```bash
+# BudsLink（专注于蓝牙耳机）
+flatpak install flathub io.github.maniacx.BudsLink
+
+# Overskride（蓝牙 + OBEX 客户端，功能更强，但需手动安装）
+# 项目地址：https://github.com/Overskride/Overskride
+```
+
+### 📦 命令行方案（最可靠，不受图形界面依赖影响）
+
+如果图形工具无法扫描到设备，可用 bluetoothctl 命令：
+
+```bash
+bluetoothctl
+power on
+scan on          # 扫描设备
+pair <MAC地址>   # 配对
+connect <MAC地址>
+trust <MAC地址>
+exit
+```
+
+---
+# 第二十一阶段：软件安装与包管理建议
+
+## 📦 包管理使用建议
+
+### 优先级原则
+
+| 优先级 | 方案 | 适用场景 |
+|---|---|---|
+| **首选** | apt | 系统组件、轻量工具、依赖简单的软件 |
+| **次选** | flatpak | 图形应用、依赖复杂或与系统版本冲突的软件 |
+| **万不得已** | snap | 仅当 apt 和 flatpak 均无法安装时使用 |
+
+**原因**：
+
+- snap 包在 Bay Trail 这类老设备上流畅度明显下降，且占用更多磁盘空间和内存。
+- flatpak 虽然也占用额外空间，但启动速度和资源占用通常优于 snap。
+- apt 与系统集成度最高，资源占用最少，优先使用。
+
+### 🧹 清理命令
+
+```bash
+# APT 清理
+sudo apt autoremove          # 移除不需要的依赖包
+sudo apt clean               # 清理本地软件包缓存
+sudo apt autoclean           # 清理过时的缓存包
+
+# Flatpak 清理
+flatpak uninstall --unused   # 移除不再需要的运行时
+flatpak repair               # 修复并清理损坏的 Flatpak 数据
+```
+
+### 💡 软件安装示例
+
+```bash
+# 优先尝试 apt
+sudo apt install <软件名>
+
+# 遇到依赖错误时，尝试 flatpak
+flatpak install flathub <应用ID>
+
+# 万不得已时，才考虑 snap
+sudo snap install <软件名>
+```
 
 ---
 # 📋 常见问题（FAQ）
