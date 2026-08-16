@@ -301,6 +301,11 @@
 - 这台机器的 BIOS 自动扫描时只会尝试 64 位文件（卡死），但只要在 **Boot From File** 中手动指定路径，指向这个自带的 32 位 `bootia32.efi`，它就能正常加载 Ventoy 菜单。
 - 网上下载的 bootia32.efi 是 **GRUB 引导器**，主要用于**系统安装完成后**引导硬盘上的 Ubuntu，而不是用来启动 Ventoy。
 
+> 🔧 **避免卡死的操作建议**：
+> 1. 可以**先进入启动管理器（Boot Manager）后，再接入 U 盘**，避免 BIOS 自动扫描时卡在 64 位文件上。
+> 2. **更好的做法**：将 64 位的 `bootx64.efi` 移出 Ventoy U 盘的 `/EFI/BOOT/` 目录（最好不要让它存在于 U 盘里），这样 BIOS 扫描时找不到 64 位文件，就不会出现卡死情况。
+> 3. **兜底方案**：如果系统没有进入 Ventoy 菜单，再从 **Boot From File** 中选中 `bootia32.efi` 启动 Ventoy 菜单。
+
 > 💡 **bootia32.efi 工作原理**：bootia32.efi 本身只是一个 EFI 可执行文件，它的具体行为取决于它内部加载的配置（如 grub.cfg）。Ventoy 自带的版本会加载 Ventoy 本体；而 GRUB 版会读取 grub.cfg 并引导硬盘上的 Linux 内核。
 
 **正确的操作逻辑链**：
