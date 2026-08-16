@@ -43,7 +43,7 @@
 ---
 # 📖 关于本手册
 
-> <span style="color:red"><b>⚠️ 版权声明：本仓库所含 mssl1680.fw 固件版权归酷比魔方（CUBE）原厂所有，仅供个人学习与设备修复使用。若您是版权方并希望移除相关内容，请联系我们，我们将立即删除。</b></span>
+<img src="copyright-notice.svg" alt="版权声明" width="100%">
 
 本手册基于 **酷比魔方 i10-WL**（Intel Bay Trail 平台）的实际部署经验整理而成，包含：
 - eMMC 驱动固化、外接网卡修复、触屏完整方案（Silead GSL1680）
@@ -926,7 +926,7 @@ chmod +x set-scale.sh
 
 > ⚠️ 固件非开源，分享时需标注版权归原厂所有。
 
-> <span style="color:red"><b>⚠️ 免责声明：本仓库所含 mssl1680.fw 固件版权归酷比魔方（CUBE）原厂所有，仅供个人学习与设备修复使用。若您是版权方并希望移除相关内容，请联系我们，我们将立即删除。</b></span>
+<img src="copyright-notice.svg" alt="免责声明" width="100%">
 
 ---
 *整合完成：安装前置须知 → 紧急启动 → 系统恢复 → 引导修复 → 驱动/固件 → 触屏完整修复 → 日常维护 → FAQ*
