@@ -36,7 +36,7 @@
 - [第十七阶段：Flatpak 网络劫持排查](#第十七阶段flatpak-网络劫持排查)
 - [第十八阶段：zhcon 中文终端](#第十八阶段tty2-自动启动-zhcon中文终端)
 - [第十九阶段：电池状态查看](#第十九阶段电池状态查看日常维护)
-- [第二十阶段：桌面工具推荐（压缩/文本/蓝牙）](#第二十阶段桌面工具推荐压缩文本蓝牙)
+- [第二十阶段：桌面工具推荐（压缩/文本/办公/蓝牙）](#第二十阶段桌面工具推荐压缩文本办公蓝牙)
 - [第二十一阶段：软件安装与包管理建议](#第二十一阶段软件安装与包管理建议)
 - [📋 常见问题（FAQ）](#-常见问题faq)
   - [🖥️ MATE 桌面图标显示（主文件夹/回收站）](#️-mate-桌面图标显示主文件夹回收站)
@@ -863,6 +863,53 @@ flatpak install flathub dev.pantheum.janus
 
 - **Pluma**：MATE 默认文本编辑器（`sudo apt install pluma`），启动速度尚可。
 - **Nano**：命令行文本编辑器（已预装），适合快速编辑配置文件。
+
+## 📄 办公套件（LibreOffice）
+
+> MATE 桌面环境下，LibreOffice 是推荐使用的办公套件。由于 2GB 内存设备的限制，安装方式**推荐优先使用 Flatpak 版本**（已实测通过），以避免与系统 Python 版本的依赖冲突。
+
+### ✅ 方案一：Flatpak 版（推荐，已实测可用）
+
+```bash
+flatpak install flathub org.libreoffice.LibreOffice
+```
+
+- **优点**：自带运行环境，不受系统 Python 版本影响，已在 CUBE i10-WL 上验证通过。
+- **启动方式**：在 MATE 菜单中找到 LibreOffice 组件，或终端运行 `flatpak run org.libreoffice.LibreOffice`。
+- **首次启动**：可能需要 10-20 秒初始化，属于正常现象。
+
+### ⚠️ 方案二：APT 版（可能因依赖冲突无法安装）
+
+```bash
+sudo apt install libreoffice -y
+```
+
+- **已知问题**：在 Ubuntu 26.04 上，libreoffice 依赖 python3-uno，而 python3-uno 需要 python3 (< 3.13)，但系统默认 Python 版本为 3.13+，可能导致安装失败。
+- **如果遇到依赖错误**：直接使用方案一（Flatpak 版）。
+
+### ⚙️ 性能优化建议（2GB 内存设备）
+
+LibreOffice 在低内存设备上可能运行较慢，可通过以下设置改善：
+
+1. **关闭动画效果**：
+   - 打开 LibreOffice → 工具 → 选项 → 视图。
+   - 取消勾选 **"使用动画"** 和 **"平滑滚动"**。
+2. **调整 Java 内存分配**（如果启用 Java）：
+   - 工具 → 选项 → 高级 → Java 选项。
+   - 将 Java 运行时内存限制设为 **256MB 或更低**。
+3. **禁用自动更新检查**：
+   - 工具 → 选项 → 在线更新 → 取消勾选 **"自动检查更新"**。
+
+### 📋 轻量级替代方案（可选）
+
+如果 LibreOffice 仍然感觉沉重，可考虑以下轻量级办公套件：
+
+| 名称 | 适用场景 | 安装命令 |
+|---|---|---|
+| **AbiWord** | 轻量级文字处理 | `sudo apt install abiword -y` |
+| **Gnumeric** | 轻量级电子表格 | `sudo apt install gnumeric -y` |
+
+> 这些工具功能较精简，但启动速度更快，适合低配设备。
 
 ## 🐦 蓝牙管理器
 
