@@ -1,5 +1,5 @@
 # CUBE-i10-WL-Ubuntu-Guide
-酷比魔方 i10-WL 刷入64位 Ubuntu-Linux(Ubuntu-Server 26.04 LTS) 教程（触屏修复）
+酷比魔方 i10-WL 输入64位 Ubuntu-Linux(Ubuntu-Server 26.04 LTS) 教程（触屏修复）
 
 # 🧩 酷比魔方 i10-WL（Bay Trail）Linux 完整修复手册
 
@@ -257,6 +257,7 @@ ssh 用户名@目标设备IP
 ## 💾 制作 Ventoy 启动盘
 
 > 一个 U 盘同时搞定"装 Linux"和"进 PE 维护"，启动时在 Ventoy 菜单里自由切换。
+> 📥 Ventoy 官网下载：[ventoy.net](https://www.ventoy.net/cn/index.html)
 
 | 软件 | 说明 |
 |---|---|
