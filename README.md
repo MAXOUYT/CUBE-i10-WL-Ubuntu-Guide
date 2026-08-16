@@ -262,7 +262,7 @@ ssh 用户名@目标设备IP
 | 软件 | 说明 |
 |---|---|
 | **Ventoy**（推荐）| 启动盘主方案：直接引导 U 盘里的各种 ISO（系统安装镜像 / PE 镜像）|
-| **WePE** | 微 PE，功能全、自带 DiskGenius，官网 wepe.com.cn 下载；需用其安装包的"生成 ISO"功能导出 **Win_PE.iso** |
+| **WePE** | 微 PE，功能全、自带 DiskGenius，官网 [wepe.com.cn](https://www.wepe.com.cn) 下载；需用其安装包的"生成 ISO"功能导出 **Win_PE.iso** |
 
 **推荐做法（一个 U 盘通吃）**：
 1. 准备一个 **≥8GB** 的 U 盘（会清空数据），用 Ventoy 制作启动盘。
