@@ -262,7 +262,7 @@ ssh 用户名@目标设备IP
 | 软件 | 说明 |
 |---|---|
 | **Ventoy**（推荐）| 启动盘主方案：直接引导 U 盘里的各种 ISO（系统安装镜像 / PE 镜像）|
-| **WePE** | 微 PE，功能全、自带 DiskGenius，官网 [wepe.com.cn](https://www.wepe.com.cn) 下载；需用其安装包的"生成 ISO"功能导出 **Win_PE.iso** |
+| **WePE** | 微 PE，功能全、自带 DiskGenius，官网 [wepe.com.cn](https://www.wepe.com.cn) 下载（**务必选 32 位版**，推荐新版 Win10 32位.iso）|
 
 **推荐做法（一个 U 盘通吃）**：
 1. 准备一个 **≥8GB** 的 U 盘（会清空数据），用 Ventoy 制作启动盘。
@@ -273,7 +273,7 @@ ssh 用户名@目标设备IP
 
 > <img src="https://img.shields.io/badge/%E2%9A%A0%EF%B8%8F%20%E9%87%8D%E8%A6%81-PE%20%E7%9A%84%20ISO%20%E5%BF%85%E9%A1%BB%E6%98%AF%2032%20%E4%BD%8D%E7%9A%84-red?style=for-the-badge" alt="重要提醒">
 >
-> <b>WePE 生成 ISO 时选 32 位版</b>。本机是 **32 位 UEFI**，**64 位的 WinPE 无法启动，会蓝屏**！
+> <b>WePE 官网下载时就要选择 32 位的版本（推荐新版 Win10 32位.iso，DG 功能比较多，可以执行全盘备份）</b>。本机是 **32 位 UEFI**，**64 位的 WinPE 无法启动，会蓝屏**！
 
 > 💡 **DiskGenius 查看 Linux 分区**：Windows 默认不识别 ext4 文件系统，但 **DiskGenius 专业模式可以直接浏览 ext4**——在 DG 左侧选中分区，右侧即可看到 Linux 目录结构（无需挂载）。
 
