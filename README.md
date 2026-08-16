@@ -79,6 +79,47 @@
   - 🐧 **Linux**：下载 `.deb`（Debian/Ubuntu）或 `.AppImage`（通用便携格式）
   - 🪟 **Windows**：下载 `.exe`
 
+> 💡 **全平台 DSH 均支持 SSH**：无论是官方仓库、安卓移植版还是桌面封装版，都内置了 SSH 能力，可用于远程操作目标设备。
+
+---
+
+#### 🔑 启用 OpenSSH Server（让手机/电脑能连上目标设备）
+
+> ⚠️ **注意**：Ubuntu Server 最小化安装**大概率没有安装 OpenSSH Server**（只有 SSH 客户端）。需要先在目标设备上启用它，DSH 才能通过 SSH 连接。
+
+**第一步：安装 OpenSSH Server**（在目标设备上执行）
+
+```bash
+sudo apt update
+sudo apt install openssh-server -y
+```
+
+**第二步：启动并设置开机自启**
+
+```bash
+sudo systemctl enable --now ssh
+sudo systemctl status ssh    # 确认 active (running)
+```
+
+**第三步：确认目标设备的 IP 地址**
+
+```bash
+ip addr show | grep "inet "    # 找到类似 192.168.x.x 的局域网 IP
+```
+
+**第四步：从手机/电脑连接测试**
+
+```bash
+# 在手机/电脑的终端执行（或让 DSH 直接使用）
+ssh 用户名@目标设备IP
+# 例：ssh maxouyt@192.168.31.22
+```
+
+> 💡 **防火墙注意**：如果开启了 ufw 防火墙，需要放行 SSH 端口：
+> ```bash
+> sudo ufw allow ssh
+> ```
+
 ---
 
 本手册基于 **酷比魔方 i10-WL**（Intel Bay Trail 平台）的实际部署经验整理而成，包含：
