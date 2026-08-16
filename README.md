@@ -643,12 +643,12 @@ xinput set-prop $DEV_ID 'libinput Calibration Matrix' 1.0 0.0 0.0 0.0 1.0 0.0 0.
 
 ### Edge
 - 启用 **"使用标签页休眠功能节省资源"**（`edge://settings/system`）。
-- 安装 **uBlock Origin** 拦截广告和追踪器。
+- 安装 **uBlock Origin 或 AdGuard** 拦截广告和追踪器。
 - 限制同时打开的标签页数量（建议不超过 3-5 个）。
 
 ### Firefox
 - 启用 **"自动卸载不活跃标签页"**（`about:preferences` → 性能 → 取消勾选"使用推荐的性能设置" → 勾选"自动卸载不活跃标签页"）。
-- 安装 **uBlock Origin**。
+- 安装 **uBlock Origin 或 AdGuard**。
 
 ---
 # 第十四阶段：WiFi / 网络常用维护
