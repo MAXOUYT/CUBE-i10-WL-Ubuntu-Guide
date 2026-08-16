@@ -297,8 +297,8 @@
 
 **为什么用 Ventoy 自带的也能进？**
 
-- Ventoy 为了兼容性，官方已内置 32 位引导文件，只是默认名称是 bootx64.efi（或放在特定路径）。
-- 这台机器的 BIOS 自动扫描时只会尝试 64 位文件（卡死），但只要在 **Boot From File** 中手动指定路径，指向这个自带的 32 位文件，它就能正常加载 Ventoy 菜单。
+- Ventoy 为了兼容性，官方已内置 32 位引导文件 **`bootia32.efi`**（位于 `/EFI/BOOT/` 目录）。注意：**`bootx64.efi` 是 64 位引导文件，用它启动无法进入 Ventoy 菜单**——这台 32 位 UEFI 机器必须用 bootia32.efi。
+- 这台机器的 BIOS 自动扫描时只会尝试 64 位文件（卡死），但只要在 **Boot From File** 中手动指定路径，指向这个自带的 32 位 `bootia32.efi`，它就能正常加载 Ventoy 菜单。
 - 网上下载的 bootia32.efi 是 **GRUB 引导器**，主要用于**系统安装完成后**引导硬盘上的 Ubuntu，而不是用来启动 Ventoy。
 
 > 💡 **bootia32.efi 工作原理**：bootia32.efi 本身只是一个 EFI 可执行文件，它的具体行为取决于它内部加载的配置（如 grub.cfg）。Ventoy 自带的版本会加载 Ventoy 本体；而 GRUB 版会读取 grub.cfg 并引导硬盘上的 Linux 内核。
