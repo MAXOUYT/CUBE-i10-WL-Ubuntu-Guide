@@ -413,7 +413,7 @@ ssh 用户名@目标设备IP
 - `https://github.com/lamadotcare/bootia32-efi/blob/main/bootia32.efi`
 - `https://github.com/hirotakaster/baytail-bootia32.efi/raw/master/bootia32.efi`
 
-**使用方法**：下载 bootia32.efi 后放入启动 U 盘的 `EFI/BOOT/` 目录（或系统 ESP 分区的 `EFI/BOOT/`），用于引导硬盘上的 Ubuntu。
+**使用方法**：下载 bootia32.efi 后**放到 U 盘里准备就行**（**不要放入 U 盘的 EFI 目录**）。装好系统后，**直接复制到系统 ESP 分区**的 `EFI/BOOT/` 目录里，用于引导硬盘上的 Ubuntu。
 
 ### 🔌 Ventoy 启动盘的「正确姿势」
 
