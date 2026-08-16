@@ -52,6 +52,8 @@
 
 **测试环境**：Ubuntu 26.04 LTS + MATE 桌面环境实测通过。
 
+<span style="color: gray;">💡 可自行选择 Kubuntu 或 Lubuntu 以获得现成的桌面环境。本教程旨在对设备进行最大程度的优化，以及保证桌面环境是较为丰富且容易上手的，所以使用了 Ubuntu Server + MATE 桌面环境。</span>
+
 ---
 # -1️⃣ 硬件进门指南（零基础必读）
 
