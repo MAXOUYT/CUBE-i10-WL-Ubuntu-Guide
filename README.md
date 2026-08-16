@@ -1123,6 +1123,43 @@ trust <MAC地址>
 exit
 ```
 
+### 🐧 蓝牙排查经验总结（基于实际排查过程）
+
+#### ✅ 当前状态
+
+- 蓝牙硬件（hci0）可正常识别，服务默认启用。
+- 图形化管理工具通过 Flatpak 版 Bluejay 实现，功能完整（扫描、配对、连接、信任）。
+- AAC 编码支持需通过第三方 PPA 额外安装（详见手册第十六阶段）。
+
+#### ❌ 可能遇到的问题及原因
+
+1. **图形工具无法安装**
+   - blueman、gnome-control-center 因 Python 版本依赖冲突（python3 < 3.13）无法通过 APT 安装。
+   - **解决**：优先使用 Flatpak 版 Bluejay（`io.github.ebonjaeger.bluejay`）。
+2. **蓝牙服务未启动**
+   - 执行 `sudo systemctl status bluetooth` 检查，若未运行则 `sudo systemctl start bluetooth`。
+3. **设备被锁定（rfkill）**
+   - `rfkill list` 显示 `Soft blocked: yes` 时，执行 `sudo rfkill unblock bluetooth`。
+4. **扫描不到设备**
+   - 先确认 `bluetoothctl scan on` 能否扫描到，能则说明硬件正常，问题在图形工具权限。
+   - Flatpak 应用需确保已授予蓝牙权限（Bluejay 默认已申请，无需额外配置）。
+5. **音频编码只有 SBC**
+   - 系统默认不包含 AAC/aptX 编码器，需通过 pipewire-extra-bt-codecs PPA 手动安装 AAC 支持（见手册第十六阶段）。
+
+#### 🔧 建议排查顺序
+
+1. 检查服务状态：`sudo systemctl status bluetooth`
+2. 检查硬件锁定：`rfkill list`
+3. 命令行测试：`bluetoothctl scan on`
+4. 图形工具：Flatpak 安装 Bluejay
+5. 音频编码：按需安装 AAC 支持（非必需）
+
+#### 💡 特别提醒
+
+- **声卡问题与蓝牙无关**：系统显示"虚拟输出"是板载声卡未驱动，不影响蓝牙音频（蓝牙设备会单独显示）。
+- **磁吸散热器干扰**：磁吸散热器可能触发霍尔传感器休眠，导致蓝牙断连（详见 FAQ）。
+- **Flatpak 网络劫持**：若 `flatpak install` 卡住，检查 HTTP 请求是否被劫持（详见手册第十七阶段）。
+
 ---
 # 第二十一阶段：软件安装与包管理建议
 
