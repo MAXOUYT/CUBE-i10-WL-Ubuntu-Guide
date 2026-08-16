@@ -37,6 +37,7 @@
 - [第十八阶段：zhcon 中文终端](#第十八阶段tty2-自动启动-zhcon中文终端)
 - [第十九阶段：电池状态查看](#第十九阶段电池状态查看日常维护)
 - [第二十阶段：桌面工具推荐（压缩/文本/办公/蓝牙）](#第二十阶段桌面工具推荐压缩文本办公蓝牙)
+  - [🖥️ MATE 桌面环境安装说明（非常规安装）](#️-mate-桌面环境安装说明非常规安装)
 - [第二十一阶段：软件安装与包管理建议](#第二十一阶段软件安装与包管理建议)
 - [📋 常见问题（FAQ）](#-常见问题faq)
   - [🖥️ MATE 桌面图标显示（主文件夹/回收站）](#️-mate-桌面图标显示主文件夹回收站)
@@ -798,6 +799,108 @@ upower -i $(upower -e | grep BAT) | grep -E "percentage|state|time to empty"
 
 > 针对 2GB 内存的 Bay Trail 设备，推荐轻量级桌面工具，替代启动缓慢的大型软件。
 > 以下方案按推荐度排序，标注"已实测"的均已在 CUBE i10-WL 上验证通过。
+
+---
+
+## 🖥️ MATE 桌面环境安装说明（非常规安装）
+
+> ⚠️ 由于 Ubuntu 26.04 的软件源中 MATE 元包存在依赖冲突，无法通过常规方式直接安装完整的 MATE 桌面。本文档采用分步安装核心组件的方式，因此最终桌面环境**缺少部分默认预装软件**（如文本编辑器、归档管理器等），需要手动补充。
+
+### 🧠 为什么不能直接安装 ubuntu-mate-desktop？
+
+```bash
+# 以下命令会失败（依赖冲突）
+sudo apt install ubuntu-mate-desktop
+```
+
+**失败原因**：
+
+- ubuntu-mate-desktop 元包依赖大量组件，其中部分包与 Ubuntu 26.04 的系统库版本不兼容。
+- 关键冲突包括 **bzip2、python3-gi、dbus-x11** 等核心依赖。
+
+### ✅ 实际成功安装方式
+
+**第一步：使用 aptitude 解决依赖并安装核心组件**
+
+```bash
+sudo apt install aptitude -y
+sudo aptitude install mate-desktop-environment-core
+```
+
+在 aptitude 交互式解决依赖时，选择降级少数冲突库的方案（通常默认即可），安装 MATE 核心桌面环境。
+
+若 aptitude 方案不可用，可尝试直接安装核心组件（可能缺少部分功能）：
+
+```bash
+sudo apt install mate-desktop mate-session-manager mate-panel mate-terminal caja marco -y
+```
+
+**第二步：安装显示管理器（可选，本文档使用 startx 启动）**
+
+```bash
+sudo apt install lightdm -y   # 可选，本文档最终使用 startx 启动桌面
+```
+
+**第三步：配置 startx 启动桌面**
+
+```bash
+echo "exec mate-session" > ~/.xinitrc
+```
+
+之后在 TTY 中输入 `startx` 即可启动 MATE 桌面。
+
+### 📦 桌面环境安装后缺少的软件（需手动补充）
+
+由于安装的是"核心组件"而非完整元包，以下软件需手动安装：
+
+| 类别 | 缺失软件 | 推荐替代方案 |
+|---|---|---|
+| 文本编辑器 | pluma（MATE 默认）| CorePad（Flatpak，已实测）或 pluma |
+| 归档管理器 | engrampa（MATE 默认）| ark（APT，已实测）或命令行工具 |
+| 系统监视器 | mate-system-monitor | 已安装 htop、btop（可选）或 Resources（Flatpak）|
+| 截图工具 | mate-screenshot | gnome-screenshot 或 flameshot |
+| 计算器 | mate-calc | gnome-calculator 或 qalculate-gtk |
+
+### 🔧 补充安装推荐（已实测可用的配置）
+
+```bash
+# 文本编辑器（已实测）
+flatpak install flathub org.cubocore.CorePad
+
+# 归档管理器（已实测）
+sudo apt install ark -y
+
+# 系统监视器（已实测）
+flatpak install flathub net.nokyan.Resources
+
+# 截图工具（可选）
+sudo apt install gnome-screenshot -y
+
+# 计算器（可选）
+sudo apt install gnome-calculator -y
+```
+
+### 📋 验证桌面环境是否完整
+
+安装完成后，可通过以下命令检查常用桌面组件是否已就绪：
+
+```bash
+# 检查 MATE 核心组件
+mate-session --version
+caja --version
+
+# 检查已安装的桌面应用
+ls /usr/share/applications/ | grep -E "pluma|engrampa|mate-terminal|caja"
+```
+
+### 💡 为什么采用这种方式安装？
+
+- 常规 ubuntu-mate-desktop 无法安装（依赖冲突）。
+- mate-desktop-environment-core 是最小化安装，只包含桌面核心，不包含任何"额外"的应用程序。
+- 这符合 2GB 内存设备的轻量化需求，避免了安装大量不需要的预装软件。
+- 用户可以根据实际需要选择性补充软件，而不是被强制安装一堆用不上的工具。
+
+---
 
 ## 🗂️ 压缩包管理器
 
