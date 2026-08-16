@@ -794,7 +794,7 @@ upower -i $(upower -e | grep BAT) | grep -E "percentage|state|time to empty"
 > ⚠️ **仅更换新电池后的操作**：新电池首次使用建议做 1-2 次完整充放电循环，让 BMS 学习新电池的真实容量（`energy-full-design` 与 `energy-full` 会逐渐趋于一致）。
 
 ---
-# 第二十阶段：桌面工具推荐（压缩/文本/蓝牙）
+# 第二十阶段：桌面工具推荐（压缩/文本/办公/蓝牙）
 
 > 针对 2GB 内存的 Bay Trail 设备，推荐轻量级桌面工具，替代启动缓慢的大型软件。
 > 以下方案按推荐度排序，标注"已实测"的均已在 CUBE i10-WL 上验证通过。
