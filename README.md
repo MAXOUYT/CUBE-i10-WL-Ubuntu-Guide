@@ -68,7 +68,7 @@
 
 - SSH 仅限于设备**可以正常联网**时可用。
 - 没网的情况下，也可使用**手机有线共享网络热点**的方式来完成。
-- **DeepSeek Harness（DSH）** 是安卓上的**免费开源项目**；需要付费的是 **DeepSeek API**——**花十几块钱充值 API 就能完成一些自动化操作**。
+- **DeepSeek Harness（DSH）** 是安卓上的**免费开源项目**；需要付费的是 **DeepSeek API**——**花十几块钱充值 API 就能完成一些自动化操作**（API 官网：[platform.deepseek.com](https://platform.deepseek.com)）。
 
 ---
 
