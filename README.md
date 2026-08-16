@@ -43,7 +43,9 @@
 ---
 # 📖 关于本手册
 
-<img src="copyright-notice.svg" alt="版权声明" width="100%">
+> <img src="https://img.shields.io/badge/%E2%9A%A0%EF%B8%8F%20%E7%89%88%E6%9D%83%E5%A3%B0%E6%98%8E-%E5%9B%BA%E4%BB%B6%E5%BD%92%E9%85%B7%E6%AF%94%E9%AD%94%E6%96%B9(CUBE)%E5%8E%9F%E5%8E%82%E6%89%80%E6%9C%89-red?style=for-the-badge" alt="版权声明"><br>
+> <img src="https://img.shields.io/badge/%E7%94%A8%E9%80%94-%E4%BB%85%E4%BE%9B%E4%B8%AA%E4%BA%BA%E5%AD%A6%E4%B9%A0%E4%B8%8E%E8%AE%BE%E5%A4%87%E4%BF%AE%E5%A4%8D-darkred?style=for-the-badge" alt="用途"><br>
+> <img src="https://img.shields.io/badge/%E7%89%88%E6%9D%83%E6%96%B9-%E8%AF%B7%E8%81%94%E7%B3%BB%E6%88%91%E4%BB%AC%E7%AB%8B%E5%8D%B3%E5%88%A0%E9%99%A4-red?style=for-the-badge" alt="版权方">
 
 本手册基于 **酷比魔方 i10-WL**（Intel Bay Trail 平台）的实际部署经验整理而成，包含：
 - eMMC 驱动固化、外接网卡修复、触屏完整方案（Silead GSL1680）
@@ -926,7 +928,9 @@ chmod +x set-scale.sh
 
 > ⚠️ 固件非开源，分享时需标注版权归原厂所有。
 
-<img src="copyright-notice.svg" alt="免责声明" width="100%">
+> <img src="https://img.shields.io/badge/%E2%9A%A0%EF%B8%8F%20%E7%89%88%E6%9D%83%E5%A3%B0%E6%98%8E-%E5%9B%BA%E4%BB%B6%E5%BD%92%E9%85%B7%E6%AF%94%E9%AD%94%E6%96%B9(CUBE)%E5%8E%9F%E5%8E%82%E6%89%80%E6%9C%89-red?style=for-the-badge" alt="版权声明"><br>
+> <img src="https://img.shields.io/badge/%E7%94%A8%E9%80%94-%E4%BB%85%E4%BE%9B%E4%B8%AA%E4%BA%BA%E5%AD%A6%E4%B9%A0%E4%B8%8E%E8%AE%BE%E5%A4%87%E4%BF%AE%E5%A4%8D-darkred?style=for-the-badge" alt="用途"><br>
+> <img src="https://img.shields.io/badge/%E7%89%88%E6%9D%83%E6%96%B9-%E8%AF%B7%E8%81%94%E7%B3%BB%E6%88%91%E4%BB%AC%E7%AB%8B%E5%8D%B3%E5%88%A0%E9%99%A4-red?style=for-the-badge" alt="版权方">
 
 ---
 *整合完成：安装前置须知 → 紧急启动 → 系统恢复 → 引导修复 → 驱动/固件 → 触屏完整修复 → 日常维护 → FAQ*
