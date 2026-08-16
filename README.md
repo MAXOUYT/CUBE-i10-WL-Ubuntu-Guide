@@ -271,7 +271,9 @@ ssh 用户名@目标设备IP
    - **Win_PE.iso** —— 微 PE，用于备份 / 分区 / 应急维护
 3. 开机从 U 盘启动进入 Ventoy 菜单，按需选择要启动的 ISO，随时切换。
 
-> ⚠️ **重要：PE 的 ISO 必须是 32 位的**（WePE 生成 ISO 时选 32 位版）。本机是 **32 位 UEFI**，**64 位的 WinPE 无法启动，会蓝屏**。
+> <img src="https://img.shields.io/badge/%E2%9A%A0%EF%B8%8F%20%E9%87%8D%E8%A6%81-PE%20%E7%9A%84%20ISO%20%E5%BF%85%E9%A1%BB%E6%98%AF%2032%20%E4%BD%8D%E7%9A%84-red?style=for-the-badge" alt="重要提醒">
+>
+> <b>WePE 生成 ISO 时选 32 位版</b>。本机是 **32 位 UEFI**，**64 位的 WinPE 无法启动，会蓝屏**！
 
 > 💡 **DiskGenius 查看 Linux 分区**：Windows 默认不识别 ext4 文件系统，但 **DiskGenius 专业模式可以直接浏览 ext4**——在 DG 左侧选中分区，右侧即可看到 Linux 目录结构（无需挂载）。
 
