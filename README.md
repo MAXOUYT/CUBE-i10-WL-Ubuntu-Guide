@@ -86,6 +86,93 @@
 - **USB 启动设为优先**（或从 Boot From File 手动选择）。
 - **关闭 Fast Boot**（如有该选项）——否则可能跳过 USB 检测。
 
+### 🧩 BIOS 完整操作指南（Boot Manager / SCU 详解）
+
+> 📋 本节为 i10-W 的 BIOS 操作完整指南，基于实际排查经验整理。
+
+#### 🔑 如何进入 BIOS？
+
+- **进入启动菜单**：开机时连续点按 ESC 键。
+- **进入 BIOS 设置界面（SCU）**：在启动菜单中，选择 **SCU** 即可进入真正的 BIOS 高级设置。
+
+> ⚠️ **强烈建议使用有线键盘**。现代高性能无线键鼠在 BIOS 下可能因 USB 轮询率不兼容导致按键失灵（例如无线键盘的 ESC 或回车键无反应）。实测有线键盘最稳妥。
+
+#### 📋 按下 ESC 后进入的界面是什么？
+
+这是 **启动管理器（Boot Manager）**，用于临时选择本次从哪个设备启动，**不修改 BIOS 永久设置**。
+
+#### 🔘 启动菜单各选项功能
+
+| 选项 | 功能 |
+|---|---|
+| **Continue** | 正常启动系统 |
+| **Boot Manager** | 选择启动设备（U盘、硬盘等）|
+| **Device Management** | 查看硬件 ID，一般用不上 |
+| **Boot From File** | 手动选择引导文件，我们当时通过此入口加载了 `/EFI/BOOT/bootia32.efi`，成功绕过 BIOS 限制 |
+| **Secure Boot Option** | 安全启动设置入口（但不如 SCU 里全面）|
+| **SCU** | 真正的 BIOS 高级设置界面 |
+
+#### ⚙️ 真正的 BIOS 界面（SCU）关键设置
+
+进入 SCU 后，顶部有多个选项卡，调整过的核心设置如下：
+
+**主画面**
+
+- 可在此修正系统时间（原 CMOS 电池没电导致时间重置）
+
+**进阶（Advanced）**
+
+- **Legacy USB Support → Enabled**（开启），否则 USB 键盘在 BIOS 下可能无法使用。
+
+**开机（Boot）**
+
+- **EFI 裝置為先 → 停用**（最关键的一步，强制使用传统引导模式）
+- **USB 開機 → 啟用**
+- **Windows® 8 Fast Boot → 停用**（老设备开此功能易导致 USB 失灵）
+
+**安全（Security）**
+
+- **Secure Boot → Disabled**（禁用）
+- 对于 Insyde BIOS，有时需要先设置一个管理员密码（Set Supervisor Password），才能修改 Secure Boot 的开关。设置密码后，Secure Boot 选项才会变为可编辑状态。
+
+**为什么必须禁用 Secure Boot？**
+
+- 安装的是**第三方操作系统（Ubuntu）**，不是预装的 Windows。Secure Boot 开启时会阻止未签名的引导程序（如 bootia32.efi）和内核加载。
+- 能成功引导 64 位 Linux，Secure Boot 大概率已经被禁用。如果不确定，进去确认一下即可。
+
+**操作系统（OS Configuration / OS Selection）**
+
+- **OS Configuration**（或类似名称的选项）→ 选择 **winOS and Ubuntu**
+- 这个选项告诉 BIOS 你将使用哪种操作系统。我们当时在 SCU 的"进阶"或"主画面"选项卡中找到了它，并将其从默认的 **winOS and Android** 改为了 **winOS and Ubuntu**。
+
+**为什么需要改这个？**
+
+- 这台设备原厂是 Windows + Android 双系统，BIOS 默认配置为 Android 模式。
+- 改为 winOS and Ubuntu 后，BIOS 会为 Linux 内核提供更匹配的 **ACPI（电源管理）**和硬件初始化参数，能有效避免装完系统后出现睡死、无法关机、电池电量不显示等问题。
+
+**离开（Exit）**
+
+- 调整完所有设置后，按 **F10** 保存并退出。
+
+#### ⌨️ 快捷键提示
+
+| 按键 | 功能 |
+|---|---|
+| **F1** | 帮助 |
+| **ESC** | 返回上一级 |
+| **F5 / F6** | 调整数值（如启动顺序）|
+| **Enter** | 选择/确认 |
+| **F9** | 恢复默认设置 |
+| **F10** | 保存并退出 |
+
+#### 🧠 为什么是这些设置？
+
+当时遇到的死结是：**BIOS 是 32 位 UEFI，但想装 64 位 Linux**。默认的 **EFI 裝置為先** 会让 BIOS 只认 64 位引导文件（bootx64.efi），导致卡死。将该项**停用**后，BIOS 会尝试传统引导方式，配合 **Boot From File** 手动加载 32 位引导文件（bootia32.efi），最终成功引导 64 位系统。
+
+而 **Secure Boot 的禁用**，则确保了未签名的 bootia32.efi 和 Linux 内核能够被系统接受并加载。操作系统选项改为 **winOS and Ubuntu** 则进一步优化了 BIOS 对 Linux 的电源管理和硬件支持，避免出现挂起/休眠异常、电池电量读取错误等问题。
+
+> 💡 如果用无线键盘操作无效，**果断换有线键盘**——这是最省时间的做法。
+
 ## 💾 制作 Ventoy 启动盘
 
 > 一个 U 盘同时搞定"装 Linux"和"进 PE 维护"，启动时在 Ventoy 菜单里自由切换。
