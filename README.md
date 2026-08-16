@@ -37,6 +37,7 @@
 - [第十八阶段：zhcon 中文终端](#第十八阶段tty2-自动启动-zhcon中文终端)
 - [第十九阶段：电池状态查看](#第十九阶段电池状态查看日常维护)
 - [📋 常见问题（FAQ）](#-常见问题faq)
+  - [🖥️ MATE 桌面图标显示（主文件夹/回收站）](#️-mate-桌面图标显示主文件夹回收站)
 - [📋 许可证声明](#-许可证声明)
 
 ---
@@ -813,6 +814,57 @@ sudo update-grub
 **解决**：在 MATE 控制中心 → 窗口 → 取消勾选**"启用软件合成窗口管理器"**。
 
 **副作用**：窗口圆角消失。如需保留圆角，可对特定应用添加 `--disable-csd` 启动参数。
+
+## 🖥️ MATE 桌面图标显示（主文件夹/回收站）
+
+> 桌面默认可能不显示"主文件夹"和"回收站"图标，可手动启用。
+
+### 方法一：通过桌面背景设置（图形界面）
+
+1. 右键点击桌面空白处 → 选择 **"更改桌面背景"**。
+2. 在弹出的窗口中，切换到 **"桌面"** 选项卡。
+3. 在 **"桌面图标"** 部分，勾选：
+   - **"显示主文件夹"**（或 Home）
+   - **"显示回收站"**（或 Trash）
+4. 点击 **"关闭"**，图标会立即出现在桌面上。
+
+> 如果上述选项不可见，可能需要安装或更新 **caja** 文件管理器。
+
+### 方法二：通过命令行（gsettings）
+
+```bash
+# 显示主文件夹
+gsettings set org.mate.caja.desktop home-icon-visible true
+
+# 显示回收站
+gsettings set org.mate.caja.desktop trash-icon-visible true
+```
+
+如果 gsettings 提示键不存在，可尝试：
+
+```bash
+dconf write /org/mate/caja/desktop/home-icon-visible true
+dconf write /org/mate/caja/desktop/trash-icon-visible true
+```
+
+执行后，图标应立刻出现在桌面上。如果未出现，可重启 caja-desktop 进程：
+
+```bash
+killall caja-desktop && caja-desktop &
+```
+
+### 📁 补充：启用"计算机"图标（可选）
+
+如果需要在桌面上显示"计算机"（即此电脑），可以额外执行：
+
+```bash
+gsettings set org.mate.caja.desktop computer-icon-visible true
+```
+
+### 💡 注意事项
+
+- 如果使用 `startx` 启动桌面，环境变量 `DISPLAY` 必须正确设置，否则 gsettings 命令可能无法生效（可在终端中先 `export DISPLAY=:0`）。
+- 上述设置**永久生效**，即使重启桌面也不会丢失。
 
 ---
 # 📋 许可证声明
