@@ -1023,7 +1023,7 @@ LibreOffice 在低内存设备上可能运行较慢，可通过以下设置改�
 
 | 软件 | 功能 | 安装方式 | 说明 |
 |---|---|---|---|
-| **Resources** | 系统资源监视器（与 Ubuntu Desktop 26.04 一致）| Flatpak | 基于 GTK4 + libadwaita，界面现代，功能完整 |
+| **Resources** | 系统资源监视器（与 Ubuntu Desktop 26.04 一致）| Flatpak | 基于 GTK4 + libadwaita，界面现代（GPU/电池数据有平台限制，见下）|
 | **Ptyxis** | 终端模拟器（与 Ubuntu Desktop 26.04 一致）| Flatpak | 基于 GTK4 + libadwaita，GNOME 默认终端 |
 
 ```bash
@@ -1061,6 +1061,20 @@ flatpak install flathub app.devsuite.Ptyxis
 
 - 如果上述应用启动缓慢，可尝试清理 Flatpak 缓存：`flatpak uninstall --unused`。
 - 若 Ptyxis 动画卡顿明显，可在 `~/.config/ptyxis/` 中调整渲染设置，或切换回 mate-terminal 作为备选。
+
+### ⚠️ 已知限制（Bay Trail 平台）
+
+**GPU 计数器不可用**：
+
+- Resources 的 GPU 监控功能并非完整——Bay Trail（Z3735F）这类老平台的 GPU **缺少性能计数器**，所有相关的性能监测软件（Resources、btop、htop 的 GPU 模块等）**都无法读取 GPU 数据**。这是硬件限制，非软件问题。
+
+**电池数据部分不可用**：
+
+- 若为新电池，只能读取**部分数据**。
+- **不可用**：电池健康（health）、设计容量（energy-full-design）、制造商、型号名称——这些属性取决于电池厂商是否写入固件数据。
+- **可用**：电池使用/充电功耗数据、电池设备属性、电池容量、状态（是否充电）。
+
+> 💡 电池数据详情见[第十九阶段：电池状态查看](#第十九阶段电池状态查看日常维护)。
 
 ### 🔧 备选方案：使用系统原生软件
 
