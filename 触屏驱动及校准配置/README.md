@@ -5,6 +5,10 @@
 ![Platform](https://img.shields.io/badge/平台-Bay%20Trail-lightgrey)
 ![Kernel](https://img.shields.io/badge/内核-7.0.0--14--generic-green)
 
+> <img src="https://img.shields.io/badge/%E2%9A%A0%EF%B8%8F%20%E7%89%88%E6%9D%83%E5%A3%B0%E6%98%8E-%E5%9B%BA%E4%BB%B6%E5%BD%92%E9%85%B7%E6%AF%94%E9%AD%94%E6%96%B9(CUBE)%E5%8E%9F%E5%8E%82%E6%89%80%E6%9C%89-red?style=for-the-badge" alt="版权声明"><br>
+> <img src="https://img.shields.io/badge/%E7%94%A8%E9%80%94-%E4%BB%85%E4%BE%9B%E4%B8%AA%E4%BA%BA%E5%AD%A6%E4%B9%A0%E4%B8%8E%E8%AE%BE%E5%A4%87%E4%BF%AE%E5%A4%8D-darkred?style=for-the-badge" alt="用途"><br>
+> <img src="https://img.shields.io/badge/%E7%89%88%E6%9D%83%E6%96%B9-%E8%AF%B7%E8%81%94%E7%B3%BB%E6%88%91%E4%BB%AC%E7%AB%8B%E5%8D%B3%E5%88%A0%E9%99%A4-red?style=for-the-badge" alt="版权方">
+
 > 让 CUBE i10-WL（及同系列 Bay Trail 平板）触屏在 Linux 下正常工作的完整方案。
 > 完整修复流程见 [**CUBE i10-WL Linux 完整修复手册**](https://github.com/MAXOUYT/CUBE-i10-WL-Ubuntu-Guide/blob/main/README.md)（含 32 位 UEFI 引导、GRUB 修复等全部环节）。
 
@@ -99,3 +103,7 @@ sudo ./switch-coords.sh 2   # 切到 参数2 (1366x768)
 | silead_fix.c / .ko | GPL v2 |
 | fwtool / Firmware::Silead | GPL v2（[onitake/gsl-firmware](https://github.com/onitake/gsl-firmware)）|
 | mssl1680.fw | 专有（Proprietary）|
+
+> <img src="https://img.shields.io/badge/%E2%9A%A0%EF%B8%8F%20%E7%89%88%E6%9D%83%E5%A3%B0%E6%98%8E-%E5%9B%BA%E4%BB%B6%E5%BD%92%E9%85%B7%E6%AF%94%E9%AD%94%E6%96%B9(CUBE)%E5%8E%9F%E5%8E%82%E6%89%80%E6%9C%89-red?style=for-the-badge" alt="版权声明"><br>
+> <img src="https://img.shields.io/badge/%E7%94%A8%E9%80%94-%E4%BB%85%E4%BE%9B%E4%B8%AA%E4%BA%BA%E5%AD%A6%E4%B9%A0%E4%B8%8E%E8%AE%BE%E5%A4%87%E4%BF%AE%E5%A4%8D-darkred?style=for-the-badge" alt="用途"><br>
+> <img src="https://img.shields.io/badge/%E7%89%88%E6%9D%83%E6%96%B9-%E8%AF%B7%E8%81%94%E7%B3%BB%E6%88%91%E4%BB%AC%E7%AB%8B%E5%8D%B3%E5%88%A0%E9%99%A4-red?style=for-the-badge" alt="版权方">
