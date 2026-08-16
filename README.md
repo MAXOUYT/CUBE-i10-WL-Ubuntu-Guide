@@ -68,7 +68,16 @@
 
 - SSH 仅限于设备**可以正常联网**时可用。
 - 没网的情况下，也可使用**手机有线共享网络热点**的方式来完成。
-- **DeepSeek Harness（DSH）** 是**免费开源项目**，其原型是**桌面端**的；**安卓端是基于桌面端修改的移植版**（安卓下载：[dsh-mobile-apk v0.10.4](https://github.com/kelai141/dsh-mobile-apk/releases/tag/v0.10.4)）。需要付费的是 **DeepSeek API**——**花十几块钱充值 API 就能完成一些自动化操作**（API 官网：[platform.deepseek.com](https://platform.deepseek.com)）。
+- **DeepSeek Harness（DSH）** 是**免费开源项目**，其原型是**桌面端**的；**安卓端是基于桌面端修改的移植版**。需要付费的是 **DeepSeek API**——**花十几块钱充值 API 就能完成一些自动化操作**（API 官网：[platform.deepseek.com](https://platform.deepseek.com)）。
+
+#### 📦 DSH 项目地址
+
+- **⚙️ 官方仓库**（桌面端主仓库，开发者使用，需 Node.js）：[deepseek-ai/deepseek-harness](https://github.com/deepseek-ai/deepseek-harness)
+- **📱 安卓移植版**（手机 SSH 自动化，开箱即用）：[dsh-mobile-apk v0.10.4](https://github.com/kelai141/dsh-mobile-apk/releases/tag/v0.10.4)
+- **🖥️ 三平台桌面封装版**（macOS/Linux/Windows 开箱即用，无需配置 Node.js）：[steven-kid/deepseek-harness-desktop](https://github.com/steven-kid/deepseek-harness-desktop)
+  - 🍎 **macOS**：下载 `.dmg`（Apple 芯片选 arm64，Intel 选 x64）
+  - 🐧 **Linux**：下载 `.deb`（Debian/Ubuntu）或 `.AppImage`（通用便携格式）
+  - 🪟 **Windows**：下载 `.exe`
 
 ---
 
