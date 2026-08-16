@@ -68,7 +68,7 @@
 
 - SSH 仅限于设备**可以正常联网**时可用。
 - 没网的情况下，也可使用**手机有线共享网络热点**的方式来完成。
-- **DeepSeek Harness（DSH）** 是安卓上的**免费开源项目**（安卓下载：[dsh-mobile-apk v0.10.4](https://github.com/kelai141/dsh-mobile-apk/releases/tag/v0.10.4)）；需要付费的是 **DeepSeek API**——**花十几块钱充值 API 就能完成一些自动化操作**（API 官网：[platform.deepseek.com](https://platform.deepseek.com)）。
+- **DeepSeek Harness（DSH）** 是**免费开源项目**，其原型是**桌面端**的；**安卓端是基于桌面端修改的移植版**（安卓下载：[dsh-mobile-apk v0.10.4](https://github.com/kelai141/dsh-mobile-apk/releases/tag/v0.10.4)）。需要付费的是 **DeepSeek API**——**花十几块钱充值 API 就能完成一些自动化操作**（API 官网：[platform.deepseek.com](https://platform.deepseek.com)）。
 
 ---
 
