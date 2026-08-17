@@ -10,7 +10,7 @@
 
 ## 📑 目录
 
-- [📥 下载中心（Release）](https://github.com/MAXOUYT/CUBE-i10-WL-Ubuntu-Guide/releases)
+- [📥 本项目所需的相关驱动文件（Release）](https://github.com/MAXOUYT/CUBE-i10-WL-Ubuntu-Guide/releases)
 - [📖 关于本手册](#-关于本手册)
   - [🤖 给小白：用 AI 配合本教程](#-给小白用-ai-配合本教程)
 - [🔧 硬件进门指南（零基础必读）](#-1️⃣-硬件进门指南零基础必读)
