@@ -704,6 +704,40 @@ ls /sys/bus/i2c/devices/ | grep -iE "silead|goodix|ft5|ilitek"
 cat /proc/bus/input/devices | grep -i touch
 ```
 
+#### 🪟 Windows / PE 环境下查询芯片方案（装 Linux 前先确认！）
+
+> 💡 **强烈建议在 Windows 或 PE 环境下就确认好触屏芯片**，避免装完 Linux 折腾半天后发现芯片方案不同，浪费时间。
+
+**方法 1：设备管理器查看触屏设备**
+
+1. 右键"此电脑" → **管理** → **设备管理器**。
+2. 展开 **"人体学输入设备"**（Human Interface Devices）或 **"鼠标和其他指针设备"**。
+3. 找到带 **Touch** / **HID-compliant touch screen** 字样的设备。
+4. 右键 → **属性** → **详细信息** 选项卡 → 属性下拉选 **"硬件 ID"**（Hardware IDs）。
+5. 查看硬件 ID 中的 **VEN_（厂商）和 DEV_（设备）** 值。
+
+**方法 2：通过硬件 ID 判断触屏芯片厂商**
+
+| 硬件 ID 特征 | 对应厂商 | 芯片方案 |
+|---|---|---|
+| `VEN_SILEAD` 或 VID `2FEB` | Silead（希力微）| ✅ GSL 系列（本方案适用）|
+| `VEN_GOODIX` 或 VID `27C6` | Goodix（汇顶）| ❌ GT 系列 |
+| `VEN_FT` 或 VID `0D3A` | FocalTech（富迪）| ❌ FT 系列 |
+| `VEN_ILITEK` 或 VID `04D3` | Ilitek（联咏）| ❌ ILI 系列 |
+
+> 📌 **硬件 ID 参考值**：
+> - Silead：`VEN_SILEAD`、USB VID `2FEB`、I²C 名称含 `MSSL1680`
+> - Goodix：USB VID `27C6`（如 `27C6:538D` 等）
+> - FocalTech：USB VID `0D3A`、I²C 名称含 `FT5x06`
+> - Ilitek：USB VID `04D3`
+
+**方法 3：PE 环境下用 AIDA64 / CPU-Z 等工具查看**
+
+- **AIDA64** → 设备 → Windows 设备 → 人体学输入设备，可看到触屏控制器型号。
+- **HWiNFO** → 总线 → I²C / HID 设备，可看到触屏芯片名称（如 `GSL1680`、`GT911`）。
+
+> 💡 **快速判断**：本方案对应的 CUBE i10-WL 触屏是 **Silead GSL1680**（I²C 设备名 `i2c-MSSL1680:00`）。如果你的设备在 Windows 硬件 ID 里看到 `MSSL1680` 或 Silead 字样，基本可以确定是本方案适用芯片。
+
 > 💡 **确认芯片后**：
 > - 若是 **Silead GSL1680** → 本方案可直接使用。
 > - 若是**其他厂商芯片** → 请搜索对应芯片的驱动方案（如 `goodix` 驱动、`focaltech` 驱动），**本方案的固件和内核模块不适用**。
