@@ -1722,6 +1722,19 @@ gsettings set org.mate.caja.desktop computer-icon-visible true
 - 上述设置**永久生效**，即使重启桌面也不会丢失。
 
 ---
+# 🧰 实用脚本目录（Assets）
+
+> 本仓库 **Assets 目录** 收集常用实用脚本，均经过 i10 实测验证：
+
+| 脚本 | 功能 | 桌面环境 |
+|---|---|---|
+| [set-scale.sh](Assets/set-scale.sh) | 屏幕缩放比例设置（50%/75%/100%/AUTO/自定义）| MATE |
+| [restore-desktop-icons.sh](Assets/restore-desktop-icons.sh) | 桌面图标恢复（主文件夹/回收站/此电脑/网络，数字组合自由选择，自动检测桌面环境）| MATE / GNOME / Cinnamon / XFCE |
+
+> 📖 完整说明见 [Assets/README.md](Assets/README.md)
+
+---
+
 # 🖥️ 屏幕缩放比例设置脚本（set-scale.sh）
 
 > 本仓库附带一个 **MATE 桌面缩放设置脚本**，方便在 1366x768 屏幕上自定义界面缩放比例。
