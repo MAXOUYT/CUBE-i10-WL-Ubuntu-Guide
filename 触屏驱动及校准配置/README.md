@@ -12,6 +12,12 @@
 > 让 CUBE i10-WL（及同系列 Bay Trail 平板）触屏在 Linux 下正常工作的完整方案。
 > 完整修复流程见 [**CUBE i10-WL Linux 完整修复手册**](https://github.com/MAXOUYT/CUBE-i10-WL-Ubuntu-Guide/blob/main/README.md)（含 32 位 UEFI 引导、GRUB 修复等全部环节）。
 
+## 📥 一键下载
+
+[![下载触屏驱动包](https://img.shields.io/badge/📥-点击下载触屏驱动包%20v1.0.0-2ea44f?style=for-the-badge)](https://github.com/MAXOUYT/CUBE-i10-WL-Ubuntu-Guide/releases/download/v1.0.0/touchscreen-fix-pack.zip)
+
+> 下载后解压，按下方"快速开始"操作即可。
+
 ---
 
 ## 📦 内容说明
