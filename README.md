@@ -673,6 +673,7 @@ sudo swapon /swap.img
 # 第十二阶段：触屏修复（Silead GSL1680）【完整方案】
 
 > 📦 触屏驱动修复包（含脚本/固件/双参数配置）见：**[触屏驱动及校准配置说明](触屏驱动及校准配置/README.md)** ← 点击跳转独立页面
+> 📥 **一键下载**：[点击下载触屏驱动包 v1.0.0](https://github.com/MAXOUYT/CUBE-i10-WL-Ubuntu-Guide/releases/download/v1.0.0/touchscreen-fix-pack.zip)
 
 > 修复包含 4 个环节，缺一不可：
 
