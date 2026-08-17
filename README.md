@@ -698,15 +698,17 @@ sudo swapon /swap.img
 
 **如何确认你的触屏芯片**：
 
+> ⚠️ **如果执行下面命令报错 `rg: error parsing flag -E`**：说明你的系统把 `grep` 别名成了 `rg`（ripgrep，如本手册 i10 的 `~/.bashrc` 里有 `alias grep="rg"`）。ripgrep 不支持 `-E` 参数（它默认就是扩展正则）。下面的命令已统一用 **`command grep`**（强制调用系统原生 GNU grep，绕过别名），任何环境都能直接复制执行；如果你喜欢 rg，可等价改写成 `... | rg -i "..."`。
+
 ```bash
-# 方法 1：查看内核日志中的触屏设备
-dmesg | grep -iE "touch|silead|goodix|focal|ilitek"
+# 方法 1：查看内核日志中的触屏设备（需要 sudo 读 dmesg）
+sudo dmesg | command grep -iE "touch|silead|goodix|focal|ilitek"
 
-# 方法 2：查看 I²C 设备列表
-ls /sys/bus/i2c/devices/ | grep -iE "silead|goodix|ft5|ilitek"
+# 方法 2：查看 I²C 设备列表（Silead 设备名通常含 MSSL，如 i2c-MSSL1680:00）
+ls /sys/bus/i2c/devices/ | command grep -iE "silead|goodix|ft5|ilitek|mssl"
 
-# 方法 3：查看输入设备
-cat /proc/bus/input/devices | grep -i touch
+# 方法 3：查看输入设备（Silead 驱动加载后设备名是 silead_ts）
+cat /proc/bus/input/devices | command grep -iE "touch|silead"
 ```
 
 #### 🪟 Windows / PE 环境下查询芯片方案（装 Linux 前先确认！）
@@ -857,7 +859,7 @@ EOF
 # 加载测试
 sudo modprobe silead
 # 验证：dmesg 应显示 stuck workaround 生效 + 固件 build 正常
-dmesg | grep -i silead
+sudo dmesg | grep -i silead
 # 验证坐标范围（应为 0-1971 / 0-1513）
 sudo evemu-describe /dev/input/eventX | grep Max
 ```
@@ -879,14 +881,14 @@ sudo evemu-describe /dev/input/eventX | grep Max
 
 ```bash
 # 动态查找设备 ID 并确保恒等矩阵
-DEV_ID=$(xinput list | grep silead_ts | grep -oE 'id=[0-9]+' | head -1 | cut -d= -f2)
+DEV_ID=$(xinput list | grep silead_ts | command grep -oE 'id=[0-9]+' | head -1 | cut -d= -f2)
 xinput set-prop $DEV_ID 'libinput Calibration Matrix' 1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0
 ```
 
 > 🔧 **若因残留配置导致触摸偏移**（一次性排查脚本）：
 > ```bash
 > # 先找到设备名
-> xinput list | grep -i touch
+> xinput list | command grep -iE "touch|silead"
 > # 再强制设置恒等矩阵
 > xinput set-prop "<设备名>" 'libinput Calibration Matrix' 1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0
 > ```
@@ -919,12 +921,12 @@ nmcli dev wifi list
 ip a show wlx...
 
 # 外接网卡掉线排查
-dmesg | grep -i usb | tail
+sudo dmesg | grep -i usb | tail
 # 确认 usbcore.autosuspend 已生效
 cat /sys/module/usbcore/parameters/autosuspend   # 应显示 -1
 
 # 查看内核日志中的 USB/网卡/触屏相关错误
-sudo dmesg | grep -iE "usb|wlx|rtl8xxxu|silead|error" | tail -30
+sudo dmesg | command grep -iE "usb|wlx|rtl8xxxu|silead|error" | tail -30
 ```
 
 ### 网络连接管理（nm-connection-editor）
@@ -1005,7 +1007,7 @@ systemctl --user restart pipewire pipewire-pulse
 ### 配置 `~/.bashrc`
 ```bash
 # 获取当前 tty 编号
-TTY_NUM=$(tty | grep -oE "[0-9]+$")
+TTY_NUM=$(tty | command grep -oE "[0-9]+$")
 
 # 在 tty2 自动启动 zhcon（使用 exec）
 if [[ "$(tty)" == "/dev/tty2" && -z "$ZHCON_RUNNING" ]]; then
@@ -1037,7 +1039,7 @@ fi
 upower -i /org/freedesktop/UPower/devices/battery_BAT0
 
 # 快速查看电量和状态
-upower -i $(upower -e | grep BAT) | grep -E "percentage|state|time to empty"
+upower -i $(upower -e | grep BAT) | command grep -E "percentage|state|time to empty"
 ```
 
 💡 **充电功率解读**：
@@ -1145,7 +1147,7 @@ mate-session --version
 caja --version
 
 # 检查已安装的桌面应用
-ls /usr/share/applications/ | grep -E "pluma|engrampa|mate-terminal|caja"
+ls /usr/share/applications/ | command grep -E "pluma|engrampa|mate-terminal|caja"
 ```
 
 ### 💡 为什么采用这种方式安装？
@@ -1584,12 +1586,12 @@ sudo modprobe snd_soc_sst_cht_bsw_rt5645
 sudo modprobe snd_soc_skl
 ```
 
-观察 `dmesg | tail` 是否有错误（如 i2c timeout、acpi device not found）。
+观察 `sudo dmesg | tail` 是否有错误（如 i2c timeout、acpi device not found）。
 
 **3. 检查固件是否缺失**
 
 ```bash
-ls /lib/firmware/intel/ | grep -i "sof\|sst"
+ls /lib/firmware/intel/ | command grep -iE "sof|sst"
 ```
 
 确保 firmware-sof-signed 已安装：`sudo apt install firmware-sof-signed`。
