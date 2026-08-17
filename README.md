@@ -678,6 +678,36 @@ sudo swapon /swap.img
 > 📦 触屏驱动修复包（含脚本/固件/双参数配置）见：**[触屏驱动及校准配置说明](触屏驱动及校准配置/README.md)** ← 点击跳转独立页面
 > 📥 **一键下载**：[点击下载触屏驱动包 v1.0.0](https://github.com/MAXOUYT/CUBE-i10-WL-Ubuntu-Guide/releases/download/v1.0.0/touchscreen-fix-pack.zip)
 
+### 🧩 触屏方案（厂商）说明——请先确认你的触屏芯片！
+
+> ⚠️ **本方案仅适用于 Silead（希力微）GSL1680 触屏芯片**，这是 CUBE i10-WL 使用的触屏控制器。
+
+**其他厂商的触屏方案与本方案完全不同，不能直接照搬**：
+
+| 触屏厂商 | 常见芯片 | Linux 驱动 | 与本方案关系 |
+|---|---|---|---|
+| **Silead（希力微）** | GSL1680 / GSL3680 等 | 内核 `silead` 驱动 | ✅ 本方案适用 |
+| **Goodix（汇顶）** | GT911 / GT9271 等 | 内核 `goodix` 驱动 | ❌ 完全不同 |
+| **FocalTech（富迪）** | FT5x06 / FT6236 等 | 内核 `focaltech_touch` 驱动 | ❌ 完全不同 |
+| **Ilitek（联咏）** | ILI2xxx 系列 | 内核 `ilitek_ts` 驱动 | ❌ 完全不同 |
+
+**如何确认你的触屏芯片**：
+
+```bash
+# 方法 1：查看内核日志中的触屏设备
+dmesg | grep -iE "touch|silead|goodix|focal|ilitek"
+
+# 方法 2：查看 I²C 设备列表
+ls /sys/bus/i2c/devices/ | grep -iE "silead|goodix|ft5|ilitek"
+
+# 方法 3：查看输入设备
+cat /proc/bus/input/devices | grep -i touch
+```
+
+> 💡 **确认芯片后**：
+> - 若是 **Silead GSL1680** → 本方案可直接使用。
+> - 若是**其他厂商芯片** → 请搜索对应芯片的驱动方案（如 `goodix` 驱动、`focaltech` 驱动），**本方案的固件和内核模块不适用**。
+
 > 修复包含 4 个环节，缺一不可：
 
 ## 12.1 安装固件
