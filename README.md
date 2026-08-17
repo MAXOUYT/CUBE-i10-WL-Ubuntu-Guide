@@ -1722,16 +1722,16 @@ gsettings set org.mate.caja.desktop computer-icon-visible true
 - 上述设置**永久生效**，即使重启桌面也不会丢失。
 
 ---
-# 🧰 实用脚本目录（Assets）
+# 🧰 实用脚本（Release 附件）
 
-> 本仓库 **Assets 目录** 收集常用实用脚本，均经过 i10 实测验证：
+> 实用脚本以 **Release 附件** 形式发布：[🧰 实用脚本包 v1.0.0](https://github.com/MAXOUYT/CUBE-i10-WL-Ubuntu-Guide/releases/tag/utility-scripts-v1.0.0)
 
-| 脚本 | 功能 | 桌面环境 |
+| 附件 | 功能 | 桌面环境 |
 |---|---|---|
-| [set-scale.sh](Assets/set-scale.sh) | 屏幕缩放比例设置（50%/75%/100%/AUTO/自定义）| MATE |
-| [restore-desktop-icons.sh](Assets/restore-desktop-icons.sh) | 桌面图标恢复（主文件夹/回收站/此电脑/网络，数字组合自由选择，自动检测桌面环境）| MATE / GNOME / Cinnamon / XFCE |
+| [restore-desktop-icons.sh](https://github.com/MAXOUYT/CUBE-i10-WL-Ubuntu-Guide/releases/download/utility-scripts-v1.0.0/restore-desktop-icons.sh) | 桌面图标恢复（主文件夹/回收站/此电脑/网络，数字组合自由选择，自动检测桌面环境）| MATE / GNOME / Cinnamon / XFCE |
+| [set-scale.sh](https://github.com/MAXOUYT/CUBE-i10-WL-Ubuntu-Guide/releases/download/utility-scripts-v1.0.0/set-scale.sh) | 屏幕缩放比例设置（50%/75%/100%/AUTO/自定义）| MATE |
 
-> 📖 完整说明见 [Assets/README.md](Assets/README.md)
+> 📖 完整说明见 [Release 页面](https://github.com/MAXOUYT/CUBE-i10-WL-Ubuntu-Guide/releases/tag/utility-scripts-v1.0.0)
 
 ---
 
