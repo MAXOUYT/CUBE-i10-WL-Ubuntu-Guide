@@ -1734,6 +1734,33 @@ SUBSYSTEM=="sound", KERNEL=="controlC*", ATTRS{id}=="rt5640", ACTION=="add", RUN
 
 # 📋 常见问题（FAQ）
 
+## 🔊 播放时声音突然变成持续杂音（像死机时）
+
+> 现象：音频播放中，声音**突然变成持续杂音/爆音**（听起来像死机/崩溃时的声音），但系统本身正常、未死机。关闭所有应用后杂音仍可能持续一阵。
+
+**根因**：2GB 内存设备在**内存压力**下，音频 PCM 流中断（EPIPE），PipeWire 反复尝试恢复（recover 循环），期间 DAC 输出异常 → 扬声器杂音。**不一定是 OOM Killer 触发**（dmesg 通常无 OOM 记录），而是内存紧张导致音频线程调度延迟/缓冲欠载。
+
+**日志特征**（排查命令）：
+
+```bash
+# 1. 音频流断开错误（关键证据）
+journalctl -b | grep rt5640p
+# → spa.alsa: hw:rt5640p: (N suppressed) snd_pcm_avail after recover: 断开的管道
+
+# 2. 内存压力证据（同时刻）
+journalctl -b | grep "memory pressure"
+# → systemd-journald: Under memory pressure, flushing caches
+
+# 3. 确认无 OOM Killer
+dmesg | grep -i oom   # 通常无输出
+```
+
+**处理**：
+
+1. 关闭重型应用（Firefox / Edge 多标签 / 大型程序等内存大户）
+2. 等待 PipeWire 自动恢复（recover 循环约 30 秒后停止）或手动重启音频：`systemctl --user restart pipewire`
+3. 预防：避免同时开多个内存大户（参见下方【极限负载测试】章节：Edge+扩展+音乐+HMCL+LibreOffice 已是上限，再加 Firefox 即崩溃）
+
 ## 🖥️ GRUB 修复后启动黑屏
 
 部分设备在 GRUB 修复后，启动时可能出现**黑屏（但能听到系统在运行/电源指示灯亮）**——这是视频输出未初始化。可在 linux 行添加参数解决：
