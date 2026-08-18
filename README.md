@@ -1734,6 +1734,36 @@ SUBSYSTEM=="sound", KERNEL=="controlC*", ATTRS{id}=="rt5640", ACTION=="add", RUN
 
 # 📋 常见问题（FAQ）
 
+## 🔊 音量调到 >100% 后调回，音频卡死持续噪音
+
+> 现象：音量条调到 150%（软件增益）测试 → 调回正常值约 2 秒后，音频服务卡死（扬声器持续噪音停不下来），注销/重启后恢复。
+
+**两部分原因**：
+
+1. **150% 增益 = 软件 +6dB**（Soft-Mixer 方案下），满幅信号必然**削波失真**（预期行为，非故障）。音量条 **100% 已是 0dB 满幅**，超过 100% 只会劣化音质。
+2. **调回音量瞬间触发了用户会话 dbus 实例崩溃** → 依赖 dbus 的音频组件（wireplumber 等）异常 → DAC 持续输出噪音。
+
+**日志证据**：
+
+```bash
+journalctl --user -b | grep -E "systemd1|can't be made|ERROR"
+# → dbus-daemon: Activated service 'org.freedesktop.systemd1' failed: Process ... exited with status 1
+# → org.gtk.vfs.Daemon: A connection to the bus can't be made
+# → pipewire-pulse: mod.protocol-pulse: client [PulseAudio 音量控制]: ERROR command:-1 (invalid) error:25
+```
+
+**快速恢复**（无需注销）：
+
+```bash
+systemctl --user restart pipewire wireplumber
+# 或：killall pipewire   （pipewire.socket 会自动拉起）
+```
+
+**预防**：
+
+- **音量条不要超过 100%**（100% = 0dB 已是最佳音质，更高必削波）
+- 若频繁复现：检查是否存在**多个 session dbus**（`ps aux | grep dbus-daemon`），双 dbus 并存会使会话不稳定，建议注销/重启清理
+
 ## 🔊 播放时声音突然变成持续杂音（像死机时）
 
 > 现象：音频播放中，声音**突然变成持续杂音/爆音**（听起来像死机/崩溃时的声音），但系统本身正常、未死机。关闭所有应用后杂音仍可能持续一阵。
