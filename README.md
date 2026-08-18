@@ -49,7 +49,7 @@
   - [📱 现代软件推荐（GTK4）](#-现代软件推荐gtk4)
   - [⌨️ 中文输入法（fcitx5）配置](#️-中文输入法fcitx5配置)
 - [第二十一阶段：软件安装与包管理建议](#第二十一阶段软件安装与包管理建议)
-- [第二十二阶段：外放（板载声卡）未修复说明](#第二十二阶段外放板载声卡未修复说明)
+- [第二十二阶段：外放（板载声卡）修复 ✅](#第二十二阶段外放板载声卡修复)
 - [📋 常见问题（FAQ）](#-常见问题faq)
 - [🚀 性能参考：极限负载测试](#-性能参考极限负载测试2gb-内存的真实边界)
   - [🖥️ MATE 桌面图标显示（主文件夹/回收站）](#️-mate-桌面图标显示主文件夹回收站)
@@ -1544,7 +1544,7 @@ exit
 
 #### 💡 特别提醒
 
-- **声卡问题与蓝牙无关**：系统显示"虚拟输出"是板载声卡未驱动，不影响蓝牙音频（蓝牙设备会单独显示）。
+- **声卡问题与蓝牙无关**：板载声卡已修复（见第二十二阶段），蓝牙音频独立工作不受影响。
 - **磁吸散热器干扰**：磁吸散热器可能触发霍尔传感器休眠，导致蓝牙断连（详见 FAQ）。
 - **Flatpak 网络劫持**：若 `flatpak install` 卡住，检查 HTTP 请求是否被劫持（详见手册第十七阶段）。
 
@@ -1652,94 +1652,59 @@ sudo snap install <软件名>
 ```
 
 ---
-# 第二十二阶段：外放（板载声卡）未修复说明
+# 第二十二阶段：外放（板载声卡）修复 ✅
 
-> 📌 关于外放（板载声卡）的当前状态与排查建议。**未来会持续对设备进行排查，本文档将不断更新**，并声明问题属于**硬件原因**（缺少驱动无法通信、焊盘脱落等）还是**系统依赖问题**。
+> ✅ **2026-08-18 已修复**：板载声卡（Realtek RT5640）通过 **BIOS 设置**成功激活，内置扬声器正常发声！
+> 本设备外放问题的根因是 **BIOS 音频配置**，并非驱动缺失或硬件损坏（此前手册推测硬件问题，现更正）。
 
-## 现状
+## ✅ 修复方法（BIOS 设置）
 
-目前这台设备的外放（板载声卡）尚未修复，系统仅显示**"虚拟输出"**，无法通过内置扬声器或 3.5mm 耳机孔发声。
+**进入 BIOS**：开机按住 ESC（或开机后屏幕亮起时连按 ESC）→ 出现"酷比魔方"logo 下的启动菜单 → 选择 **SCU** 进入高级设置。
 
-## 不确定的原因
+**修改路径**：Advanced（进阶设置）→ **Audio Configuration**：
 
-1. **硬件可能损伤**：早期曾自行重新焊接扬声器端子（纠正原厂左右声道反接），可能因操作不当导致焊盘脱落或芯片受损。但当时焊接的是扬声器端子焊盘，未碰声卡芯片本身，且 Windows 下曾识别为"未知设备"，说明芯片可能仍在通信。
-2. **系统软件问题**：Linux 下板载声卡（常见型号 ALC5640 / RT5640）的驱动需依赖 ACPI、固件、DSP 等多个层面，在 Bay Trail 平台上经常出现 ACPI 表缺失或 I²C 通信失败，导致驱动无法完成初始化。
+| 选项 | 原值（错误） | 修改为 |
+|---|---|---|
+| **LPE Audio Support** | LPE Audio PCI mode | **LPE Audio ACPI mode** |
+| **Audio Controller** | Disabled | **启用** |
 
-## 排查方向（由易到难）
+> ℹ️ 启用 Audio Controller 后出现的三个新选项（Azalia VCi Enable / Azalia Docking Support / Azalia PME Enable）**保持默认不用动**——它们属于 HDA/Azalia 接口，与本机板载声卡（走 I2C + SST/SOF，非 HDA 总线）无关。
 
-### 🔧 软件层面（优先尝试）
+**保存并重启**（F10）后板载声卡即生效。
 
-**1. 检查 ALSA 声卡列表**
+## 🎯 修复原理
 
-```bash
-aplay -l
-cat /proc/asound/cards
-```
+- i10 的 ACPI 固件中，SST 音频 DSP 设备（80860F28）的 `_STA` 状态方法是**条件判断**：
+  `If (LPEE == 0x02 && LPED == 0) Return (0x0F)`（启用），否则 `Return (0)`（视为不存在）
+- **LPEE** 是 BIOS 写入 GNVS（全局非易失存储）的字段（DSDT 中 `OperationRegion (GNVS, SystemMemory, 0x76D77A90, 0x0335)`，偏移 0x162）
+- 默认 BIOS 设置（LPE PCI mode + Audio Controller Disabled）→ LPEE = 0x00 → `_STA` 返回 0 → 内核认为 DSP 不存在 → 驱动链无法绑定 → 仅剩 HDMI LPE 音频
+- 改为 **LPE ACPI mode** 后 → LPEE = 0x02 → `_STA` 返回 0x0F → 驱动链完整激活
 
-> 若只显示 HDMI 音频，说明板载声卡未被注册。
-
-**2. 手动加载声卡驱动模块**
-
-```bash
-sudo modprobe snd_soc_sst_bytcr_rt5640
-sudo modprobe snd_soc_sst_cht_bsw_rt5645
-sudo modprobe snd_soc_skl
-```
-
-观察 `sudo dmesg | tail` 是否有错误（如 i2c timeout、acpi device not found）。
-
-**3. 检查固件是否缺失**
+## ✅ 修复后状态
 
 ```bash
-ls /lib/firmware/intel/ | command grep -iE "sof|sst"
+$ aplay -l
+card 0: rt5640 [sof-bytcht rt5640]      # ✅ 板载声卡（PCM + Deep Buffer）
+card 1: Audio [Intel HDMI/DP LPE Audio] # HDMI 音频（保留）
 ```
 
-确保 firmware-sof-signed 已安装：`sudo apt install firmware-sof-signed`。
+- 驱动框架：**SOF**（Sound Open Firmware），固件 `intel/sof/sof-byt.ri`，拓扑 `intel/sof-tplg/sof-byt-rt5640-ssp0.tplg`
+- 机器驱动：`bytcr_rt5640`（自动应用 SSP0_AIF1 / MCLK_EN / IN3_MAP / DIFF_MIC 等 quirk）
+- 内置扬声器：实测 440Hz 测试音发声正常（Speaker 音量 100%、未静音，默认输出自动切换）
+- 3.5mm 耳机孔：RT5640 支持耳机检测（内核已创建 Headset input 设备），插入耳机可实测
 
-**4. 添加内核参数**（若驱动无法绑定 ACPI 设备）
+## 🧯 备用方案（DSDT 补丁）
 
-在 `/etc/default/grub` 的 `GRUB_CMDLINE_LINUX_DEFAULT` 中添加：
+若设备 BIOS 没有上述选项（不同批次/型号可能不同），可尝试 **DSDT 补丁**：反编译 DSDT，将 80860F28 的 `_STA` 方法强制改为 `Return (0x0F)`，重新编译后放入 initramfs（`kernel/firmware/acpi/`）通过 acpi_override 机制加载。本机已实测补丁可编译通过（0 Errors），但最终以 BIOS 方案解决。
 
-```
-snd_soc_sst_bytcr_rt5640.acpi_device_name=10EC5640
-```
+## 📌 历史排查记录（保留参考）
 
-然后 `sudo update-grub` 并重启。
+- 此前系统仅显示"虚拟输出"，无法通过内置扬声器或 3.5mm 耳机孔发声
+- 曾怀疑：硬件损伤（早期重新焊接扬声器端子）、驱动/固件缺失（RT5640 的 ACPI 依赖）
+- 软件排查（`aplay -l`、`modprobe snd_soc_sst_bytcr_rt5640`、firmware-sof-signed、内核参数、I²C 通信）均无法解决——**因为根因在 BIOS 设置层**
+- 结论修正：**问题既非驱动也非硬件，而是 BIOS 音频配置禁用了 SST 音频 DSP**
+- 备选方案仍有效：USB 声卡（即插即用）、蓝牙音箱/耳机、HDMI 音频
 
-**5. 尝试强制指定 quirk**（若模块支持）
-
-```bash
-sudo modprobe -r snd_soc_sst_bytcr_rt5640
-sudo modprobe snd_soc_sst_bytcr_rt5640 quirk=0x4004
-```
-
-**6. 检查 I²C 通信**
-
-```bash
-sudo dmesg | grep -i i2c | grep -i error
-```
-
-> 若出现 timeout 或 -EIO，可能引脚接触不良或芯片供电异常。
-
-### 🩺 硬件检测（确认是否物理损坏）
-
-- **插入 USB 声卡测试**：若系统能正常识别且发声正常，则说明系统音频栈正常，问题在板载声卡本身（硬件或固件）。
-- **检查焊点**：使用放大镜检查扬声器端子焊点是否虚焊、脱落或短路。
-- **测量通断**：用万用表测量声卡芯片相关引脚与主控之间的通路（需电路图，操作风险高）。
-
-## 备选方案（绕过板载声卡）
-
-- **USB 声卡**：即插即用，无需驱动，音质稳定。
-- **蓝牙音箱/耳机**：若蓝牙已配置（见第十六阶段），可通过蓝牙输出音频。
-- **HDMI 音频**：若使用 HDMI 外接显示器，可通过 HDMI 输出音频（已在 `aplay -l` 中显示）。
-
-## 最终说明
-
-- 本手册不保证软件修复一定成功，若尝试上述软件方案后仍无效，大概率是硬件原因，建议接受现状或使用替代方案。
-- 若后续有用户成功修复，欢迎贡献修复方法。
-- **持续更新声明**：未来会持续对设备进行排查，本文档将不断更新，并明确标注问题属于硬件原因还是系统依赖问题。
-
----
 # 📋 常见问题（FAQ）
 
 ## 🖥️ GRUB 修复后启动黑屏
