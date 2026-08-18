@@ -1693,6 +1693,33 @@ card 1: Audio [Intel HDMI/DP LPE Audio] # HDMI 音频（保留）
 - 内置扬声器：实测 440Hz 测试音发声正常（Speaker 音量 100%、未静音，默认输出自动切换）
 - 3.5mm 耳机孔：RT5640 支持耳机检测（内核已创建 Headset input 设备），插入耳机可实测
 
+## 🔊 音量映射校准（2026-08-18）
+
+> 外放激活后发现：**音量条 100% 时实际是 +12dB 硬件增益**（RT5640 扬声器音量寄存器上限），高音量段削波失真（听感像其他发行版 130% 增益）。
+
+**根因**：PipeWire 默认用**硬件音量**（sink 标记 `HW_VOLUME_CTRL`），而 RT5640 的 Speaker 音量 0-39 步进映射 -46.5dB ~ +12dB，**100% = +12dB**（超 0dBFS 即削波）。
+
+**修复（三层）**：
+
+1. **启用 Soft-Mixer（软件音量控制）**：`~/.config/wireplumber/main.lua.d/50-softmixer.lua`（wireplumber 0.4 lua 格式）：
+```lua
+rule = {
+  matches = { { { "device.name", "matches", "alsa_card.platform-bytcr_rt5640" } } },
+  apply_properties = { ["api.alsa.soft-mixer"] = true },
+}
+table.insert(alsa_monitor.rules, rule)
+```
+生效后 sink 标记变为纯软件（无 `HW_VOLUME_CTRL`），音量条 100% = 0dB。
+
+2. **修正 UCM 默认硬件音量**：`/usr/share/alsa/ucm2/codecs/rt5640/EnableSeq.conf` 第 83 行 `Speaker Playback Volume 35 → 31`（WirePlumber 每次启动会应用 UCM 设置，不改会跳回 +6dB）。备份：`EnableSeq.conf.bak-20260818`。
+
+3. **udev 双保险**：`/etc/udev/rules.d/99-rt5640-volume.rules`（声卡出现时固定 Speaker 31=0dB）：
+```
+SUBSYSTEM=="sound", KERNEL=="controlC*", ATTRS{id}=="rt5640", ACTION=="add", RUN+="/usr/bin/amixer -c 0 sset Speaker 31"
+```
+
+**效果**：音量条 0-100% 映射 -∞ ~ 0dB（软件 float，永不削波），硬件恒 0dB。实测 100% 音量 + 满幅 85% 三频和弦清晰无失真。
+
 ## 🧯 备用方案（DSDT 补丁）
 
 若设备 BIOS 没有上述选项（不同批次/型号可能不同），可尝试 **DSDT 补丁**：反编译 DSDT，将 80860F28 的 `_STA` 方法强制改为 `Return (0x0F)`，重新编译后放入 initramfs（`kernel/firmware/acpi/`）通过 acpi_override 机制加载。本机已实测补丁可编译通过（0 Errors），但最终以 BIOS 方案解决。
