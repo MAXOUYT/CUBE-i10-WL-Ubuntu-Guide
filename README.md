@@ -268,13 +268,15 @@ ssh 用户名@目标设备IP
 |---|---|
 | **Ventoy**（推荐）| 启动盘主方案：直接引导 U 盘里的各种 ISO（系统安装镜像 / PE 镜像）|
 | **WePE** | 微 PE，功能全、自带 DiskGenius，官网 [wepe.com.cn](https://www.wepe.com.cn) 下载（**务必选 32 位版**，推荐新版 Win10 32位.iso）|
+| **新版 DiskGenius**（推荐）| 用于 PE 下浏览/备份 Linux 分区：**v6.2.0+ 有 32 位版、自带 DLL 可直接在 PE 用、对 ext4 支持完整**。官网下载：[diskgenius.cn/download.php](https://www.diskgenius.cn/download.php)（**自行选择对应版本**，推荐最新版 + 32 位）|
 
 **推荐做法（一个 U 盘通吃）**：
 1. 准备一个 **≥8GB** 的 U 盘（会清空数据），用 Ventoy 制作启动盘。
 2. 将以下 ISO 直接拷入 Ventoy 启动目录（U 盘根目录或任意子目录，建议单独建一个 ISO 文件夹）：
    - **Ubuntu-Server 26.04 LTS.iso** —— 目标系统安装镜像
    - **Win_PE.iso** —— 微 PE，用于备份 / 分区 / 应急维护
-3. 开机从 U 盘启动进入 Ventoy 菜单，按需选择要启动的 ISO，随时切换。
+3. **（强烈建议）从 [DiskGenius 官网](https://www.diskgenius.cn/download.php) 下载新版 DG（选 32 位版）**，解压后放入 U 盘/PE 盘备用——PE 自带的旧版 DG 无法浏览 ext4，新版（v6.2.0+）可以，对后面的备份/排查很有用。
+4. 开机从 U 盘启动进入 Ventoy 菜单，按需选择要启动的 ISO，随时切换。
 
 > <img src="https://img.shields.io/badge/%E2%9A%A0%EF%B8%8F%20%E9%87%8D%E8%A6%81-PE%20%E7%9A%84%20ISO%20%E5%BF%85%E9%A1%BB%E6%98%AF%2032%20%E4%BD%8D%E7%9A%84-red?style=for-the-badge" alt="重要提醒">
 >
@@ -282,7 +284,7 @@ ssh 用户名@目标设备IP
 
 > 💡 **DiskGenius 与 Linux 分区（实测结论，2026-08-18 更新）**：Windows 默认不识别 ext4，**DiskGenius 免费版也无法浏览 ext4 分区**——实测中把 ext4 显示为已损坏、无法查看文件（同一 PE 读另一台 Ubuntu 的 ext4 同样损坏，实锤是 DG 兼容性问题，**文件系统本身完好**）。但是：
 > - **DG 的整盘镜像备份功能仍可用**——它走物理扇区读取，不依赖文件系统驱动。实测在 DG 中无法选择备份方式（仅可选择**压缩方式**：不压缩/快速压缩/高压缩等），整盘镜像到 .pmfx 文件后再整盘恢复，文件系统层完全不受影响
-> - **新版 DG**（**v6.2.0+**）对 ext4 支持比较完整：**有 32 位版本**（压缩包自带 DLL 运行环境，可直接在 32 位 PE 使用），可浏览 ext4 文件树，全盘镜像备份支持**"按文件备份"**等备份方式（旧版仅可选压缩方式）。官方下载：diskgenius.cn/download.php
+> - **新版 DG**（**v6.2.0+**）对 ext4 支持比较完整：**有 32 位版本**（压缩包自带 DLL 运行环境，可直接在 32 位 PE 使用），可浏览 ext4 文件树，全盘镜像备份支持**"按文件备份"**等备份方式（旧版仅可选压缩方式）。官方下载：[diskgenius.cn/download.php](https://www.diskgenius.cn/download.php)
 > - ⚠️ **无论何时都不要点 DG 的修复分区表/格式化/重建**——ext4 误报时这些写操作可能弄坏好盘
 
 ---
@@ -372,7 +374,7 @@ ssh 用户名@目标设备IP
 - ✅ **有 32 位版本**：压缩包**自带 DLL 运行环境**，可直接在 32 位 PE 使用（无需担心系统依赖）
 - ✅ 对 **ext4 支持比较完整**：可浏览文件树、按文件查看
 - ✅ 全盘镜像备份支持**"按文件备份"**等备份方式（旧版仅可选压缩方式）
-- 📥 官方下载：**diskgenius.cn/download.php**（选 32 位版）
+- 📥 官方下载：[diskgenius.cn/download.php](https://www.diskgenius.cn/download.php)（**自行选择对应版本**，推荐最新版 + 32 位）
 - 若你的 PE 集成的 DG 较旧，直接下载新版便携版放入 PE 盘即可
 
 ## 🛟 应急方案：手动 GRUB 引导（镜像恢复失败时的备选）
