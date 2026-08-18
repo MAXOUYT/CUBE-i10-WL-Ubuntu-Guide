@@ -1,5 +1,5 @@
 # CUBE-i10-WL-Ubuntu-Guide
-酷比魔方 i10-WL 输入64位 Ubuntu-Linux(Ubuntu-Server 26.04 LTS) 教程（触屏修复）
+酷比魔方 i10-WL 刷入64位 Ubuntu-Linux(Ubuntu-Server 26.04 LTS) 教程（触屏修复）
 
 > **English**: Complete guide to install Ubuntu Linux on CUBE i10-WL tablet (Bay Trail Z3735F, 32-bit UEFI). Includes Silead GSL1680 touchscreen fix, bootia32.efi 64-bit boot, USB WiFi (RTL8188GU) driver. See [Releases](https://github.com/MAXOUYT/CUBE-i10-WL-Ubuntu-Guide/releases) for driver packages.
 
