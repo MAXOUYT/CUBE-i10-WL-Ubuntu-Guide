@@ -1772,19 +1772,11 @@ systemctl --user restart pipewire wireplumber
 - 避免内存压力（见【极限负载测试】章节）
 - 若频繁复现：检查是否存在多个 session dbus（`ps aux | grep dbus-daemon`），双 dbus 会使会话不稳定
 
-> 💡 **根因实锤（2026-08-19）**：这是 **SOF 固件的已知 bug**（[thesofproject/sof Issue #3868](https://github.com/thesofproject/sof/issues/3868)：BYT/CHT + rt5640 播放几分钟后持续哔声，SOF 项目标记 **won't fix**）。i10 从 BIOS 修复（LPE ACPI mode）后一直走 **SOF** 驱动，命中此 bug（偶发）。**解决方案：切换回 SST 驱动**（Issue 明确说 SST 稳定）——已实测通过：
+> 💡 **根因实锤（2026-08-19）**：这是 **SOF 固件的已知 bug**（[thesofproject/sof Issue #3868](https://github.com/thesofproject/sof/issues/3868)：BYT/CHT + rt5640 播放几分钟后持续哔声，SOF 项目标记 **won't fix**）。i10 从 BIOS 修复（LPE ACPI mode）后一直走 **SOF** 驱动，命中此 bug（偶发）。
 >
-> ```bash
-> # 强制 SST 驱动（dsp_driver=2）
-> echo 'options snd-intel-dspcfg dsp_driver=2' | sudo tee /etc/modprobe.d/alsa-dsp-sst.conf
-> sudo update-initramfs -u && sudo reboot
-> # 验证：cat /sys/module/snd_intel_dspcfg/parameters/dsp_driver  → 2
-> # 效果：card 0 从 "sof-bytcht rt5640" 变 "bytcr-rt5640"（SST 机器驱动）
-> # 回滚：删除 /etc/modprobe.d/alsa-dsp-sst.conf + update-initramfs -u + reboot
-> #       （或恢复 initramfs 备份 /boot/initrd.img-7.0.0-14-generic.bak-sst-20260819）
-> ```
+> ⚠️ **SST 方案已实测失败（慢放 bug，2026-08-19）**：SST 驱动在 7.0.0 内核下只支持 48000Hz 且**实际时钟 38400（0.8 倍慢放）**——19.2MHz MCLK ÷ 48kHz = 400fs，超出 RT5640 codec 直接分频能力（N 分频器上限 255），驱动时钟计算错误。其他采样率（44100/32000/22050）全部被拒。**结论：SST 不可用，最终方案 = SOF + 卡死缓解**（quantum 2048 + 快速恢复命令 `systemctl --user restart pipewire wireplumber`）。
 >
-> 音量修复（Soft-Mixer + UCM 0dB + udev）是 PipeWire 层，**与 DSP 框架无关，切换后保留**。
+> 若未来尝试 SST：`echo 'options snd-intel-dspcfg dsp_driver=2' | sudo tee /etc/modprobe.d/alsa-dsp-sst.conf` + `sudo update-initramfs -u` + 重启；验证 `cat /sys/module/snd_intel_dspcfg/parameters/dsp_driver` → 2；回滚删配置即可。
 
 ## 🔊 播放时声音突然变成持续杂音（像死机时）
 
