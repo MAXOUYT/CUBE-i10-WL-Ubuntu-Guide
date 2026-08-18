@@ -274,7 +274,7 @@ ssh 用户名@目标设备IP
 **推荐做法（一个 U 盘通吃）**：
 1. 准备一个 **≥8GB** 的 U 盘（会清空数据），用 Ventoy 制作启动盘。
 2. 将以下 ISO 直接拷入 Ventoy 启动目录（U 盘根目录或任意子目录，建议单独建一个 ISO 文件夹）：
-   - **Ubuntu-Server 26.04 LTS.iso** —— 目标系统安装镜像
+   - **ubuntu-26.04-live-server-amd64.iso** —— 目标系统安装镜像（官方命名，Ubuntu Server 26.04 LTS）
    - **Win_PE.iso** —— 微 PE，用于备份 / 分区 / 应急维护
 3. **（强烈建议）从 [DiskGenius 官网](https://www.diskgenius.cn/download.php) 下载新版 DG（选 32 位版）**，解压后放入 U 盘/PE 盘备用——PE 自带的旧版 DG 无法浏览 ext4，新版（v6.2.0+）可以，对后面的备份/排查很有用。
 4. 开机从 U 盘启动进入 Ventoy 菜单，按需选择要启动的 ISO，随时切换。
@@ -489,7 +489,7 @@ ssh 用户名@目标设备IP
 
 ## 📦 安装 Ubuntu Server（本机要点）
 
-> 进入 Ventoy 菜单后选择 **Ubuntu Server ISO** 启动，安装器（Subiquity）会引导你完成安装。**通用安装步骤参考图文教程**（向导流程一致，24.04/26.04 通用）：
+> 进入 Ventoy 菜单后选择 **ubuntu-26.04-live-server-amd64.iso** 启动（官方镜像，[Ubuntu Server 下载页](https://ubuntu.com/download/server)，x86_64/amd64 架构），安装器（Subiquity）会引导你完成安装。**通用安装步骤参考图文教程**（向导流程一致，24.04/26.04 通用）：
 >
 > - 📖 **[Ubuntu Server 24.04.3 LTS 超详细安装完整教程（博客园，图文并茂）](https://www.cnblogs.com/jzssuanfa/p/19610561)** —— 步骤最全，推荐
 > - 📖 [Ubuntu Server 24.04 LTS 详细安装指南（CSDN，含 Wi-Fi 配置）](https://blog.csdn.net/marker_sun/article/details/161197913)
