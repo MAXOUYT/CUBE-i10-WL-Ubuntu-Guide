@@ -50,6 +50,7 @@
   - [⌨️ 中文输入法（fcitx5）配置](#️-中文输入法fcitx5配置)
 - [第二十一阶段：软件安装与包管理建议](#第二十一阶段软件安装与包管理建议)
 - [第二十二阶段：外放（板载声卡）修复 ✅](#第二十二阶段外放板载声卡修复-)
+- [🔊 声卡驱动与音频修复（SOF + 48倍数周期方案）](#-声卡驱动与音频修复sof-48倍数周期方案)
 - [📋 常见问题（FAQ）](#-常见问题faq)
 - [🚀 性能参考：极限负载测试](#-性能参考极限负载测试2gb-内存的真实边界)
   - [🖥️ MATE 桌面图标显示（主文件夹/回收站）](#️-mate-桌面图标显示主文件夹回收站)
@@ -1731,6 +1732,73 @@ SUBSYSTEM=="sound", KERNEL=="controlC*", ATTRS{id}=="rt5640", ACTION=="add", RUN
 - 软件排查（`aplay -l`、`modprobe snd_soc_sst_bytcr_rt5640`、firmware-sof-signed、内核参数、I²C 通信）均无法解决——**因为根因在 BIOS 设置层**
 - 结论修正：**问题既非驱动也非硬件，而是 BIOS 音频配置禁用了 SST 音频 DSP**
 - 备选方案仍有效：USB 声卡（即插即用）、蓝牙音箱/耳机、HDMI 音频
+
+
+# 🔊 声卡驱动与音频修复（SOF + 48倍数周期方案）
+
+> **2026-08-19 重大更新**：解决 SST 慢放 + SOF 哔声两大问题！
+> **一键脚本**：`fix-audio-sof.sh`（[Release 下载](https://github.com/MAXOUYT/CUBE-i10-WL-Ubuntu-Guide/releases/tag/audio-fix-v1.0.0)）
+
+## 🎯 背景：两个历史问题的根因
+
+| 问题 | 现象 | 根因 |
+|---|---|---|
+| **SST 慢放** | 播放速度 0.7-0.8x，音调偏低 | SST 驱动（dsp_driver=2）在 Bay Trail 平台的时钟 bug，**固件无关**（换独立版 IntcSST2.bin 无效）|
+| **SOF 哔声** | 播放数分钟后持续哔声/卡死 | SOF 固件拓扑基于 **48 采样倍数** 设计，PipeWire 默认 period/quantum（1024/2048）非 48 倍数引发 DMA 调度问题 |
+
+## ✅ 最终方案（实测有效）
+
+**驱动**：SOF（dsp_driver=0 默认，禁用 SST 配置）
+**关键配置**（全部 48 倍数）：
+
+### 1. PipeWire quantum=2016（48×42）
+`~/.config/pipewire/pipewire.conf.d/10-byt-stability.conf`:
+```
+context.properties = {
+    default.clock.quantum = 2016
+    default.clock.min-quantum = 1008
+    default.clock.max-quantum = 4096
+}
+```
+
+### 2. WirePlumber period-size=1008（48×21）
+`~/.config/wireplumber/main.lua.d/50-softmixer.lua`:
+```
+rule = {
+  matches = { { { "device.name", "matches", "alsa_card.platform-bytcr_rt5640" } } },
+  apply_properties = {
+    ["api.alsa.soft-mixer"] = true,
+    ["api.alsa.period-size"] = 1008,
+    ["api.alsa.headroom"] = 4096,
+  },
+}
+table.insert(alsa_monitor.rules, rule)
+```
+
+### 3. 一键应用
+```bash
+sudo bash fix-audio-sof.sh   # 自动配置以上全部 + 删除 SST 残留
+sudo reboot
+```
+
+## ✅ 实测效果（2026-08-19）
+
+- ✅ 音速正常（3 秒音频 ≈3.14 秒播放，SST 下是 4.3 秒）
+- ✅ Edge 在线音乐 **8+ 分钟无崩溃、无哔声**
+- ✅ 慢速调音量正常
+
+## ⚠️ 已知限制
+
+- **快速连续调音量**（长按按键/快速转旋钮）→ SOF IPC 软崩溃（音频卡死但声卡还在）
+  - 原因：高频 PCM 重配置超过 BYT 固件 IPC 处理极限
+  - 缓解：慢速调节正常；崩溃后**切换一次音频配置**（如改一下输出设备）即恢复
+  - 这是固件固有极限，无软件修复
+
+## 🔧 附：测试工具坑（重要）
+
+- **paplay 会阻塞超时**（pipewire-pulse 兼容层 bug）→ 用 **pw-play /tmp/test.wav**（PipeWire 原生）
+- 测试音生成：`python3` 生成 WAV 后 `pw-play` 播放
+
 
 # 📋 常见问题（FAQ）
 
