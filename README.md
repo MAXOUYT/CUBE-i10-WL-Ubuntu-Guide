@@ -1794,6 +1794,22 @@ sudo bash fix-audio-sof.sh   # 自动配置以上全部 + 删除 SST 残留
 sudo reboot
 ```
 
+### 4. VLC 音频输出修复（播放卡顿 / ALSA 重置）
+
+**问题**：VLC 播放时卡顿，且切换到蓝牙后仍一直重置 ALSA。
+
+**根因**：VLC 默认 `aout=any` 自动选择时**绕过 ALSA default 转发层**，直接枚举 `hw:rt5640` 硬件 → 与 PipeWire 抢同一个 SOF 声卡 → ALSA 不断重置 + 卡顿（切蓝牙也一样，VLC 死抓板载）。
+
+**修复**：`~/.config/vlc/vlcrc` 设 `aout=pulse`（或 `audio-output=pulse`）→ VLC 走 PulseAudio→PipeWire 统一路由，蓝牙/板载自动切换。
+
+```bash
+# 手动修复（或直接跑 fix-audio-sof.sh，已包含此步骤）
+echo "aout=pulse" >> ~/.config/vlc/vlcrc
+echo "audio-output=pulse" >> ~/.config/vlc/vlcrc
+```
+
+**原理**：系统层 ALSA `default` 设备已指向 PulseAudio（`/usr/share/alsa/alsa.conf.d/50-pulseaudio.conf`），但 VLC 的 auto 模式会绕过 default 直连 `hw:` → 必须显式指定 pulse。其他软件（Firefox/Edge 等）默认走 PulseAudio，天然正确。
+
 ## ✅ 实测效果（2026-08-19）
 
 - ✅ 音速正常（3 秒音频 ≈3.14 秒播放，SST 下是 4.3 秒）
