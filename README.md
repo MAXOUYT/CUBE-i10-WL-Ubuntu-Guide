@@ -1737,6 +1737,8 @@ SUBSYSTEM=="sound", KERNEL=="controlC*", ATTRS{id}=="rt5640", ACTION=="add", RUN
 
 # 🔊 声卡驱动与音频修复（SOF + 48倍数周期方案）
 
+> 📝 **作者：MAXOUYT**（2026-08-19 实测验证）
+>
 > **2026-08-19 重大更新**：解决 SST 慢放 + SOF 哔声两大问题！
 > **一键脚本**：`fix-audio-sof.sh`（[Release 下载](https://github.com/MAXOUYT/CUBE-i10-WL-Ubuntu-Guide/releases/tag/audio-fix-v1.0.0)）
 
