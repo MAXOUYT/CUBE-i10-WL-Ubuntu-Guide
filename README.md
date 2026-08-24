@@ -1825,13 +1825,39 @@ echo "audio-output=pulse" >> ~/.config/vlc/vlcrc
 - **切歌间隙崩溃**（2026-08-19 晚发现）：高负载下随机崩溃，最常发生在"上一首播完→下一首缓存中"的无输出空档
   - 原因：SOF 固件在"流结束→新流开始"过渡期状态切换不稳
   - 缓解：**用蓝牙设备**（绕过 SOF DSP）或轻负载使用；崩溃后重启音频服务恢复
-  - 未来计划：研究 SOF 流切换逻辑（可能 IPC 时序/状态机问题）
+  - 未来计划：研究 SOF 流切换逻辑（可能 IPC 时序/状态机问题）- **最终定位（2026-08-24 长期验证）**：48 倍数方案**大幅降低崩溃频率 + 消除卡死噪音**（静默无声而非刺耳哔声），但**无法根治**（BYT 固件硬伤，官方 won't fix）
+  - **崩溃恢复方法分类**：
+    - **类型 A（电平消失）**：DSP 运行卡死 → 模块重载可救（`sudo modprobe -r snd_sof_acpi_intel_byt snd_sof_intel_atom snd_sof snd_sof_xtensa_dsp snd_sof_utils && sudo modprobe snd_sof_acpi_intel_byt`，配合重启用户音频）
+    - **类型 B（电平恢复但无声）**：DSP 输出级未激活 → **必须完整重启系统**（BYT 不支持运行时电源管理，runtime_suspend 被内核拒绝，无法热重置 codec/DSP 输出路径）
+  - **经验**：遇到无声先看电平——电平没了用模块重载；电平在但无声直接重启，别浪费时间折腾
+  - **注意**：禁止用测试音验证（扬声器烧过一次），一律用户自己播放音乐判断
 
 ## 🔧 附：测试工具坑（重要）
 
 - **paplay 会阻塞超时**（pipewire-pulse 兼容层 bug）→ 用 **pw-play /tmp/test.wav**（PipeWire 原生）
 - 测试音生成：`python3` 生成 WAV 后 `pw-play` 播放
 
+
+
+## 🧲 盖子检测禁用（磁吸散热器必备）
+
+**背景**：i10 是平板无物理盖子，但用户用**磁吸散热器**——磁铁干扰内部霍尔传感器 → 误判"合盖" → 触发休眠 → 散热中断。
+
+**✅ 正确方法（MATE 电源管理）**：
+
+> 控制中心 → 电源管理 → "合上盖子时" → **不执行操作**
+
+**原理**：MATE 电源管理（org.mate.power-manager）的优先级**高于** `/etc/systemd/logind.conf`——改 logind.conf 的 `HandleLidSwitch=ignore` **无效**，白改！必须改 MATE 的 gsettings：
+
+```bash
+# 等效命令（桌面会话中执行）
+gsettings set org.mate.power-manager button-lid-ac "nothing"
+gsettings set org.mate.power-manager button-lid-battery "nothing"
+```
+
+**一键脚本**：`lid-switch.sh`（[utility-scripts Release](https://github.com/MAXOUYT/CUBE-i10-WL-Ubuntu-Guide/releases/tag/utility-scripts-v1.0.0)），支持 `off/on/status`，**支持 sudo 执行**（自动切回真实用户写入，避免写错 root 的 dconf）。
+
+> ⚠️ 坑：直接 `sudo gsettings set ...` 会写到 root 的 dconf（/run/user/0/bus 不存在 → 报 dconf 连接失败），控制中心看不到变化。脚本已处理此问题。
 
 # 📋 常见问题（FAQ）
 
