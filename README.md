@@ -784,6 +784,21 @@ sudo swapon /swap.img
 
 > ⚠️ **本方案仅适用于 Silead（希力微）GSL1680 触屏芯片**，这是 CUBE i10-WL 使用的触屏控制器。
 
+#### 🖐️ 触屏开关（防误触）
+
+外接键盘/鼠标使用时，可临时禁用触屏防止误触：
+
+```bash
+# 一键脚本（[utility-scripts Release](https://github.com/MAXOUYT/CUBE-i10-WL-Ubuntu-Guide/releases/tag/utility-scripts-v1.0.0)）
+./touch-switch.sh off     # 禁用触屏
+./touch-switch.sh on      # 恢复触屏
+./touch-switch.sh status  # 查看状态
+```
+
+**原理**：`xinput set-prop silead_ts "Device Enabled" 0/1`（X11 层面禁用/启用，无需卸载驱动，即时生效，重启后自动恢复）。
+
+> 💡 触屏设备名 `silead_ts`（id 会变，脚本自动查找）。仅适用 Silead GSL1680。
+
 #### 🧩 触屏芯片厂商对比表
 
 **其他厂商的触屏方案与本方案完全不同，不能直接照搬**：
