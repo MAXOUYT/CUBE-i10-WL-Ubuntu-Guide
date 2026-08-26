@@ -1855,49 +1855,6 @@ echo "audio-output=pulse" >> ~/.config/vlc/vlcrc
 
 
 
-## 🧲 盖子检测禁用（磁吸散热器必备）
-
-**背景**：i10 是平板无物理盖子，但用户用**磁吸散热器**——磁铁干扰内部霍尔传感器 → 误判"合盖" → 触发休眠 → 散热中断。
-
-**✅ 正确方法（MATE 电源管理）**：
-
-> 控制中心 → 电源管理 → "合上盖子时" → **不执行操作**
-
-**原理**：MATE 电源管理（org.mate.power-manager）的优先级**高于** `/etc/systemd/logind.conf`——改 logind.conf 的 `HandleLidSwitch=ignore` **无效**，白改！必须改 MATE 的 gsettings：
-
-```bash
-# 等效命令（桌面会话中执行）
-gsettings set org.mate.power-manager button-lid-ac "nothing"
-gsettings set org.mate.power-manager button-lid-battery "nothing"
-```
-
-**一键脚本**：`lid-switch.sh`（[utility-scripts Release](https://github.com/MAXOUYT/CUBE-i10-WL-Ubuntu-Guide/releases/tag/utility-scripts-v1.0.0)），支持 `off/on/status`，**支持 sudo 执行**（自动切回真实用户写入，避免写错 root 的 dconf）。
-
-> ⚠️ 坑：直接 `sudo gsettings set ...` 会写到 root 的 dconf（/run/user/0/bus 不存在 → 报 dconf 连接失败），控制中心看不到变化。脚本已处理此问题。
-
-
-## ⚠️ 教训：分区操作前必须先修复文件系统（2026-08-27）
-
-> **背景**：想从 EFI 分区（系统强制要求 ≥1.05GB）划 800MB 给根分区，用 DiskGenius（32位最新版，ext4 支持完善）操作时，DG 报 "inode bitmap / Block Bitmap 标记已用但未用" 错误并终止扩容。随后操作中 EFI 分区被误删 → 引导丢失 → 强制重启 → 靠备份镜像还原才恢复。
-
-**真相**：DG 没有做错——它检测到 **ext4 位图与校验和不符**（`e2fsck` 确认：组 13/137/193 块位图校验错误），**拒绝继续操作是正确保护**（防止数据损坏）。
-
-**正确顺序**：
-```bash
-# 1. 先修复文件系统（离线环境：Live USB 或 initramfs 维护模式）
-sudo e2fsck -f /dev/mmcblk1p2
-
-# 2. 再分区操作（GParted / parted，不格式化则 UUID 不变）
-# 3. 扩展文件系统（resize2fs）
-```
-
-**核心教训**：
-1. **分区操作前必须先 `e2fsck -f`** 修复文件系统（DG 检测到位图错误会拒绝，这是特性不是 bug）
-2. **EFI 分区（32 位 UEFI 引导）是系统命脉**，动它前必须有可启动恢复介质（Live USB / 备份镜像）
-3. **扩容收益 < 风险时放弃**（800MB 不值得）；系统强制的 1.05GB EFI 分区，接受它
-4. **任何磁盘操作前备份**（这次备份镜像救了系统）
-5. **正确做法**：Linux 工具（e2fsck → parted → resize2fs）+ 离线环境（Live USB）+ 先备份
-
 # 📋 常见问题（FAQ）
 
 ## 🔊 播放中音频卡死持续噪音（静音无效）
@@ -2055,6 +2012,49 @@ gsettings set org.mate.caja.desktop computer-icon-visible true
 
 > 本仓库附带一个 **MATE 桌面缩放设置脚本**，方便在 1366x768 屏幕上自定义界面缩放比例。
 > 适用于觉得界面太大/太小、想要快速调整显示比例的用户。
+
+## 🧲 盖子检测禁用（磁吸散热器必备）
+
+**背景**：i10 是平板无物理盖子，但用户用**磁吸散热器**——磁铁干扰内部霍尔传感器 → 误判"合盖" → 触发休眠 → 散热中断。
+
+**✅ 正确方法（MATE 电源管理）**：
+
+> 控制中心 → 电源管理 → "合上盖子时" → **不执行操作**
+
+**原理**：MATE 电源管理（org.mate.power-manager）的优先级**高于** `/etc/systemd/logind.conf`——改 logind.conf 的 `HandleLidSwitch=ignore` **无效**，白改！必须改 MATE 的 gsettings：
+
+```bash
+# 等效命令（桌面会话中执行）
+gsettings set org.mate.power-manager button-lid-ac "nothing"
+gsettings set org.mate.power-manager button-lid-battery "nothing"
+```
+
+**一键脚本**：`lid-switch.sh`（[utility-scripts Release](https://github.com/MAXOUYT/CUBE-i10-WL-Ubuntu-Guide/releases/tag/utility-scripts-v1.0.0)），支持 `off/on/status`，**支持 sudo 执行**（自动切回真实用户写入，避免写错 root 的 dconf）。
+
+> ⚠️ 坑：直接 `sudo gsettings set ...` 会写到 root 的 dconf（/run/user/0/bus 不存在 → 报 dconf 连接失败），控制中心看不到变化。脚本已处理此问题。
+
+
+## ⚠️ 教训：分区操作前必须先修复文件系统（2026-08-27）
+
+> **背景**：想从 EFI 分区（系统强制要求 ≥1.05GB）划 800MB 给根分区，用 DiskGenius（32位最新版，ext4 支持完善）操作时，DG 报 "inode bitmap / Block Bitmap 标记已用但未用" 错误并终止扩容。随后操作中 EFI 分区被误删 → 引导丢失 → 强制重启 → 靠备份镜像还原才恢复。
+
+**真相**：DG 没有做错——它检测到 **ext4 位图与校验和不符**（`e2fsck` 确认：组 13/137/193 块位图校验错误），**拒绝继续操作是正确保护**（防止数据损坏）。
+
+**正确顺序**：
+```bash
+# 1. 先修复文件系统（离线环境：Live USB 或 initramfs 维护模式）
+sudo e2fsck -f /dev/mmcblk1p2
+
+# 2. 再分区操作（GParted / parted，不格式化则 UUID 不变）
+# 3. 扩展文件系统（resize2fs）
+```
+
+**核心教训**：
+1. **分区操作前必须先 `e2fsck -f`** 修复文件系统（DG 检测到位图错误会拒绝，这是特性不是 bug）
+2. **EFI 分区（32 位 UEFI 引导）是系统命脉**，动它前必须有可启动恢复介质（Live USB / 备份镜像）
+3. **扩容收益 < 风险时放弃**（800MB 不值得）；系统强制的 1.05GB EFI 分区，接受它
+4. **任何磁盘操作前备份**（这次备份镜像救了系统）
+5. **正确做法**：Linux 工具（e2fsck → parted → resize2fs）+ 离线环境（Live USB）+ 先备份
 
 ## 📥 使用方法
 
